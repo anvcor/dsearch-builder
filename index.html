@@ -1,0 +1,1629 @@
+<!doctype html>
+<!--
+  DSEARCH 宏生成器 / DSEARCH macro builder
+  Copyright (C) 2026 anvcor
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DSEARCH 宏生成器</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: lens-prescription worksheet — form on the left, the generated .MAC as a printed listing on the right. */
+:root{
+  --paper:#f3f6f5; --sheet:#ffffff; --ink:#16212a; --muted:#56656e; --line:#d3dbdb; --line-strong:#aab8bb;
+  --accent:#0d6b88; --accent-ink:#ffffff; --accent-soft:#e2f0f4;
+  --ok:#2c7a4b; --warn:#a86400; --err:#b3261e; --warn-soft:#fbf1e2; --err-soft:#fbe8e6; --ok-soft:#e5f3ea;
+  --code-bg:#f7f9f8; --keep:#0d6b88; --cut:#c9d3d5;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --f-display:"IBM Plex Sans Condensed","PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --f-body:"IBM Plex Sans","PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono","Cascadia Mono",Consolas,"Microsoft YaHei",monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0e1418; --sheet:#141c21; --ink:#e2e9ec; --muted:#93a4ac; --line:#26333a; --line-strong:#3b4b53;
+  --accent:#5bb7d4; --accent-ink:#06171d; --accent-soft:#16303a;
+  --ok:#6cc58f; --warn:#e3a54a; --err:#f08a80; --warn-soft:#2e2414; --err-soft:#33191a; --ok-soft:#14291d;
+  --code-bg:#10171b; --keep:#5bb7d4; --cut:#2a3940; --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0e1418; --sheet:#141c21; --ink:#e2e9ec; --muted:#93a4ac; --line:#26333a; --line-strong:#3b4b53;
+  --accent:#5bb7d4; --accent-ink:#06171d; --accent-soft:#16303a;
+  --ok:#6cc58f; --warn:#e3a54a; --err:#f08a80; --warn-soft:#2e2414; --err-soft:#33191a; --ok-soft:#14291d;
+  --code-bg:#10171b; --keep:#5bb7d4; --cut:#2a3940; --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5}
+.wrap{max-width:1380px;margin:0 auto;padding-inline:16px;padding-block:20px 40px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-bottom:14px;border-bottom:1px solid var(--line-strong);margin-bottom:18px}
+h1{font-family:var(--f-display);font-weight:600;font-size:26px;letter-spacing:.01em;margin:0;text-wrap:balance}
+h1 small{font-family:var(--f-mono);font-size:12px;font-weight:400;color:var(--muted);margin-left:10px;letter-spacing:0}
+.sub{color:var(--muted);max-width:68ch;margin:4px 0 0}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.out{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+@media (max-width:1000px){.out{position:static}}
+
+section.card{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px 16px;min-width:0}
+section.card>h2{font-family:var(--f-display);font-weight:600;font-size:16px;margin:0 0 10px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+h2 .kw{font-family:var(--f-mono);font-size:11.5px;font-weight:400;color:var(--muted);letter-spacing:.02em}
+h2 label.sw{margin-left:auto;font-family:var(--f-body);font-size:13px;font-weight:500}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end}
+.f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.f>span{font-size:12px;color:var(--muted);letter-spacing:.02em}
+.f>span b{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-size:11.5px}
+input[type=text],input[type=number],select,textarea{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line-strong);border-radius:4px;padding:5px 7px;min-width:0}
+input[type=number],input.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;width:6.2em}
+input.w4{width:4.6em} input.w8{width:9em} input.w12{width:14em} input.wide{width:100%}
+textarea{font-family:var(--f-mono);font-size:12.5px;width:100%;min-height:72px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;user-select:none}
+.hint{font-size:12px;color:var(--muted);margin:8px 0 0;max-width:72ch}
+.hint code,.mono{font-family:var(--f-mono);font-size:12px}
+button{font:inherit;font-size:13px;font-weight:500;border-radius:4px;border:1px solid var(--line-strong);background:var(--sheet);color:var(--ink);padding:6px 11px;cursor:pointer}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.primary:hover{filter:brightness(1.08);color:var(--accent-ink)}
+button.ghost{border-color:transparent;background:transparent;color:var(--accent);padding:4px 6px}
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:4px;overflow:hidden}
+.seg button{border:0;border-radius:0;border-right:1px solid var(--line-strong);padding:5px 10px;background:var(--paper)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.disabled{opacity:.45;pointer-events:none}
+
+/* element strip */
+.elems{display:flex;gap:6px;overflow-x:auto;padding:4px 0 6px}
+.el{flex:0 0 auto;width:104px;border:1px solid var(--line);border-radius:5px;padding:6px 7px 8px;background:var(--paper);display:flex;flex-direction:column;gap:6px}
+.el .eh{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.el .eh b{color:var(--ink);font-size:12.5px}
+.el .sign{display:flex;border:1px solid var(--line-strong);border-radius:4px;overflow:hidden}
+.el .sign button{flex:1;border:0;border-radius:0;padding:3px 0;font-family:var(--f-mono);font-size:12px;background:var(--sheet)}
+.el .sign button+button{border-left:1px solid var(--line-strong)}
+.el .sign button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.el .surfs{display:flex;gap:4px}
+.surf{flex:1;font-family:var(--f-mono);font-size:11.5px;padding:3px 0;border:1px dashed var(--line-strong);background:transparent;border-radius:3px;color:var(--muted)}
+.surf[aria-pressed="true"]{border-style:solid;border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--muted);margin-top:4px}
+
+/* vfield table */
+.tblwrap{overflow-x:auto}
+table.vf{border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:520px}
+table.vf th{font-size:11.5px;font-weight:500;color:var(--muted);text-align:left;padding:4px 6px;border-bottom:1px solid var(--line-strong);white-space:nowrap}
+table.vf td{padding:4px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.vf input{width:5.4em}
+.pup{display:block}
+.mini{font-size:11.5px;color:var(--muted)}
+
+/* output */
+.listing{background:var(--code-bg);border:1px solid var(--line);border-radius:var(--r);overflow:auto;max-height:62vh}
+@media (max-width:1000px){.listing{max-height:none}}
+.listing pre{margin:0;padding:10px 0;font-family:var(--f-mono);font-size:12.5px;line-height:1.55;counter-reset:ln}
+.listing .ln{display:block;padding:0 12px 0 0;white-space:pre}
+.listing .ln::before{counter-increment:ln;content:counter(ln);display:inline-block;width:3.2em;padding-right:10px;text-align:right;color:var(--muted);opacity:.6;user-select:none}
+.listing .c{color:var(--muted)} .listing .k{color:var(--accent);font-weight:600}
+.outhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.outhead h2{margin:0;font-family:var(--f-display);font-size:16px;font-weight:600}
+.outhead .fn{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.outhead .sp{flex:1}
+.toast{font-size:12px;color:var(--ok)}
+
+/* checks */
+ul.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+ul.checks li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;font-size:13px;padding:6px 8px;border-radius:4px;background:var(--paper)}
+.pill{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.06em;padding:1px 6px;border-radius:3px;margin-top:2px;white-space:nowrap}
+.pill.err{background:var(--err-soft);color:var(--err)} .pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.info{background:var(--accent-soft);color:var(--accent)}
+.summary{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+
+.calcout{margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.calcout .cell{background:var(--paper);padding:7px 10px;display:flex;flex-direction:column;gap:1px;min-width:0}
+.calcout .cell .lab{font-size:11.5px;color:var(--muted)}
+.calcout .cell .val{font-family:var(--f-mono);font-size:14px;font-variant-numeric:tabular-nums}
+.calcout .cell.main .val{color:var(--accent);font-weight:600}
+.calcout .cell.obbline{grid-column:1/-1;flex-direction:row;align-items:center;gap:12px;flex-wrap:wrap}
+.calcout .cell.obbline .val{font-size:15px;font-weight:600}
+.calcout .cell.bad .val{color:var(--warn)}
+table.fovtab{min-width:360px}
+table.fovtab td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.vfchart{margin-top:12px;border:1px solid var(--line);border-radius:5px;background:var(--paper);padding:10px 10px 6px;position:relative;min-width:0}
+.vfchart-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin-bottom:4px}
+.vfchart-head b{font-family:var(--f-display);font-weight:600;font-size:14px}
+.vleg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.vleg span{display:inline-flex;align-items:center;gap:5px}
+.vleg svg{flex:0 0 auto}
+#vf-chart{display:block;width:100%;height:auto;touch-action:none}
+#vf-chart text{font-family:var(--f-mono);font-size:11px;fill:var(--muted)}
+#vf-chart .ttl{font-family:var(--f-body);font-size:11.5px}
+.vtip{position:absolute;pointer-events:none;background:var(--sheet);border:1px solid var(--line-strong);border-radius:4px;padding:6px 8px;font-size:12px;font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.12);white-space:nowrap;z-index:2}
+.vtip .r{display:flex;align-items:center;gap:6px}
+.vtip i{display:inline-block;width:12px;height:0;border-top:2px solid}
+.frac{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.frac b{color:var(--ink)}
+details.imp summary{cursor:pointer;color:var(--accent);font-weight:500;font-size:13px}
+details.imp[open]{margin-bottom:6px}
+.asphtab{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+h3.sub3{font-family:var(--f-display);font-weight:600;font-size:14px;margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--line);display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+h3.sub3 .kw{font-family:var(--f-mono);font-size:11.5px;font-weight:400;color:var(--muted)}
+h3 label.sw{margin-left:auto;font-family:var(--f-body);font-size:13px;font-weight:500}
+table.cao{min-width:360px} table.cao td.role{font-size:12px;color:var(--muted)}
+#outview button{font-weight:600}
+button.fold{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-body);font-size:13px;font-weight:500;margin-left:4px}
+button.fold .chev{width:7px;height:7px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .15s}
+button.fold[aria-expanded="true"] .chev{transform:translateY(2px) rotate(-135deg)}
+.foldsum{margin:-4px 0 0;font-size:12.5px;color:var(--muted)}
+.foldsum b{color:var(--ink);font-weight:600}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div>
+    <h1>DSEARCH 宏生成器<small>SYNOPSYS V15/V16 · DSEARCH</small></h1>
+    <p class="sub">填写镜头规格、搜索目标、渐晕和非球面布局，右侧实时生成可直接 <span class="mono">EM</span> 运行的 <span class="mono">.MAC</span>。规则来自 SYNOPSYS 手册和在 V15/V16 上的实际测试。</p>
+  </div>
+  <div class="top-actions">
+    <button id="btn-sample" type="button">载入示例（35mm F/2.8）</button>
+    <button id="btn-reset" type="button">清空为默认</button>
+  </div>
+</header>
+
+<div class="grid">
+<div class="col" id="form">
+
+<section class="card">
+  <h2>导入现有宏 <span class="kw">可选</span></h2>
+  <details class="imp" id="imp">
+    <summary>粘贴一个 DSEARCH 宏，自动回填下面的表单</summary>
+    <textarea id="imp-text" rows="8" placeholder=" DSEARCH 1  QUIET&#10; SYSTEM&#10; ..."></textarea>
+    <div class="row" style="margin-top:8px"><button id="btn-import" type="button" class="primary">解析并回填</button><span id="imp-msg" class="mini"></span></div>
+  </details>
+</section>
+
+<section class="card">
+  <h2>运行 <span class="kw">DSEARCH LLIB [QUIET] · CORE</span></h2>
+  <div class="row">
+    <label class="f"><span>结果存入镜库位置 <b>LLIB</b></span><input id="llib" type="number" min="1" max="10" step="1" class="w4"></label>
+    <label class="chk"><input id="quiet" type="checkbox"> QUIET</label>
+    <label class="chk"><input id="core-on" type="checkbox"> CORE</label>
+    <label class="f"><span>核数</span><input id="core" type="number" min="1" max="128" class="w4"></label>
+    <label class="f"><span>宏文件名</span><input id="fname" type="text" class="w12"></label>
+    <label class="chk"><input id="comments" type="checkbox"> 输出说明注释</label>
+  </div>
+  <p class="hint"><span class="mono">QUIET</span> 只能写在 DSEARCH 行上：关键字只认前 3 个字母，写进 GOALS 会被当成 <span class="mono">QUICK</span>。</p>
+</section>
+
+<section class="card">
+  <h2>系统 <span class="kw">SYSTEM … END</span></h2>
+  <div class="row">
+    <label class="f" style="flex:1 1 220px"><span>标题 <b>ID</b></span><input id="sid" type="text" class="wide"></label>
+    <label class="f"><span>单位</span><select id="units"><option>MM</option><option>CM</option><option>IN</option></select></label>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <div class="f"><span>物方给法（无限远物 OBB）</span>
+      <div class="seg" id="epmode"><button type="button" data-v="calc">半像高 + 焦距 + F数</button><button type="button" data-v="obb">直接填 OBB</button></div></div>
+  </div>
+  <div class="row" id="w-calc" style="margin-top:10px">
+    <label class="f"><span>半像高 <b>Y′</b>（传感器对角线一半）</span><input id="yimg" type="number" step="any"></label>
+    <label class="f"><span>有效焦距 <b>EFL</b></span><input id="efl" type="number" step="any"></label>
+    <label class="f"><span>光圈 <b>F/#</b>（即 FNUM）</span><input id="fnum2" type="number" step="any"></label>
+  </div>
+  <div class="row" id="w-obb" style="margin-top:10px">
+    <label class="f"><span>半视场角 <b>UPP0</b> (°)</span><input id="upp0" type="number" step="any"></label>
+    <label class="f"><span>半入瞳 <b>YMP1</b></span><input id="ymp1" type="number" step="any"></label>
+  </div>
+  <div class="calcout" id="calc-out"></div>
+  <div class="row" style="margin-top:10px">
+    <label class="chk"><input id="tw-fw100" type="checkbox"> FNUM 权重 100</label>
+    <label class="chk"><input id="tw-giht" type="checkbox"> 钉住像高 <span class="mono">M Y′ 2 A GIHT</span></label>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <label class="chk"><input id="tw-dist" type="checkbox"> 控制畸变</label>
+    <label class="f" id="w-dist1"><span>方式</span><select id="dist-mode"><option value="LUA">上限 |畸变| ≤</option><option value="M">目标值 =</option></select></label>
+    <label class="f" id="w-dist2"><span>畸变 (%)</span><input id="dist-val" type="number" step="any" class="w4"></label>
+    <label class="f" id="w-dist3"><span>权重</span><input id="dist-w" type="number" step="any" class="w4" placeholder="1"></label>
+    <label class="chk" id="w-dist4"><input id="dist-all" type="checkbox"> 每个 FOV 视场都控制（不勾只控全视场）</label>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <label class="chk"><input id="cra-on" type="checkbox"> 限制 CRA（像面主光线角）</label>
+    <label class="f" id="w-cra1"><span>CRA 上限 (°)</span><input id="cra-max" type="number" step="any" min="0" max="89" class="w4"></label>
+    <label class="f" id="w-cra2"><span>权重</span><input id="cra-w" type="number" step="any" class="w4" placeholder="1"></label>
+    <label class="chk" id="w-cra3"><input id="cra-all" type="checkbox"> 每个 FOV 视场都限制（不勾只限全视场）</label>
+  </div>
+  <p class="hint">FNUM 权重 100 避免曲率求解产生超短半径；像高、畸变、CRA 写进 SPECIAL AANT 开头，精修宏也带上。畸变按百分比写成组合项 <span class="mono">LUA 3 1 1 A P YA h / DIV GIHT / MUL CONST 100/h / S CONST 100</span>，算出来就是 100·(YA − h·GIHT)/(h·GIHT)，负值是桶形；"上限"模式超出 1 个百分点时罚值等于权重。V16 按行从上到下把每一项依次加、减、乘、除到同一个累加值上，没有先乘除后加减（手册 §10.3：每一项都与前面的分量依次组合），所以这样写正好是畸变百分比。OBB 的 HBAR 是线性像高比例（手册 §3.1.1），h 视场的理想像高就是 h·GIHT。CRA 写成 <span class="mono">LUA tan(CRA) 权重 窗口 A P HH h 0 0 0</span>：像面上主光线角正切的绝对值上限，超出 2° 时罚值等于权重（手册 §10.3.5.1）。带 VFIELD 时 YEN=0 的主光线在渐晕后光束的中心，就是传感器实际接收到的主光线角。</p>
+  <div class="tblwrap" style="margin-top:8px"><table class="vf fovtab" id="fov-tab"></table></div>
+  <p class="hint">FOV 填的是 HBAR，是<b>线性像高比例</b>：HBAR=0.7 对应像高 0.7·Y′、物方角 atan(0.7·tanω)，不是 0.7·ω。只有 OBD 物体才按角度比例。</p>
+  <div class="row" style="margin-top:6px">
+    <label class="f" style="flex:1 1 240px"><span>波长 <b>WAVL</b>（µm，空格分隔）</span><input id="wavl" type="text" class="wide mono"></label>
+    <label class="f" style="flex:1 1 160px"><span>波长权重 <b>WT1</b>（可空，个数同波长）</span><input id="wt" type="text" class="wide mono" placeholder="1 1 1"></label>
+  </div>
+  <p class="hint">波长权重会乘到每组单色光线集上：解析 <span class="mono">GSR rt wt del icol …</span> 时，光线权重 × 第 icol 个波长的权重。颜色号按 WAVL 的书写顺序。</p>
+  <label class="f" style="margin-top:10px"><span>其他 SYSTEM 行（原样写入，如 <b>WAP 1</b>）</span><textarea id="sysextra" rows="2"></textarea></label>
+</section>
+
+<section class="card">
+  <h2>结构与搜索空间 <span class="kw">ELEMENTS · SINGLE · FILTER · ASPH</span></h2>
+  <div class="row">
+    <label class="f"><span>元件数 <b>ELEMENTS</b></span><input id="nel" type="number" min="1" max="21" class="w4"></label>
+    <label class="f"><span>正元件数（可空）</span><input id="npos" type="number" min="1" max="21" class="w4"></label>
+    <div class="f"><span>正负约束</span>
+      <div class="seg" id="signmode"><button type="button" data-v="none">不约束</button><button type="button" data-v="filter">FILTER 部分锁定</button><button type="button" data-v="single">SINGLE 只跑一种</button></div></div>
+  </div>
+  <div class="elems" id="elems" aria-label="元件与面号"></div>
+  <div class="legend"><span>元件 k 占面 <span class="mono">2k−1 / 2k</span>，光阑不占面号（V15 实测）。</span><span>点面号 = 该面加非球面。</span><span id="sign-legend"></span></div>
+
+  <div class="row" style="margin-top:12px">
+    <label class="chk"><input id="asph-q" type="checkbox"> <span class="mono">ASPH Q</span> 快速筛选阶段也变 CC</label>
+    <label class="chk"><input id="asph-r" type="checkbox"> <span class="mono">ASPH R</span> 真实光线阶段加高次项</label>
+    <label class="f"><span>每面变量数 n（含 CC）</span><select id="asph-n"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+    <button type="button" class="ghost" id="asph-clear">清除非球面面号</button>
+  </div>
+  <p class="hint asphtab" id="asph-terms"></p>
+  <p class="hint">生成时 Q、R 与面号分三行写：同一行混写时 Q/R 的哈希会被当成面号越界写入。项数对所有非球面面统一。</p>
+</section>
+
+<section class="card">
+  <h2>起始结构 <span class="kw">RSTART · THSTART · ASTART · NSTART · PDIST · RANDOM · CSD</span></h2>
+  <div class="row">
+    <label class="f"><span>起始半径 <b>RSTART</b>（≤4 个）</span><input id="rstart" type="text" class="w8 mono" placeholder="默认 100 in"></label>
+    <label class="f"><span>起始厚度 <b>THSTART</b></span><input id="thstart" type="number" step="any" class="w4" placeholder="0.1 in"></label>
+    <label class="f"><span>起始空气 <b>ASTART</b></span><input id="astart" type="number" step="any" class="w4" placeholder="= TH"></label>
+    <label class="f"><span>起始玻璃 <b>NSTART</b> nd</span><input id="nst-n" type="number" step="any" class="w4" placeholder="1.6"></label>
+    <label class="f"><span>vd</span><input id="nst-v" type="number" step="any" class="w4" placeholder="40"></label>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <label class="chk"><input id="pdist" type="checkbox"> PDIST 按光焦度分配起始曲率</label>
+    <label class="chk"><input id="rand-on" type="checkbox"> RANDOM 随机搜索</label>
+    <label class="f" id="w-randn"><span>随机例数</span><input id="rand-n" type="number" min="1" class="w4" placeholder="200"></label>
+    <label class="chk"><input id="csd" type="checkbox"> CSD：变 CSUM/CDIFF（光焦度 + 弯曲）代替半径</label>
+  </div>
+  <p class="hint">RSTART 给几个值，二分搜索就把每种正负组合各试几次（总例数 = 2ⁿ × 半径个数）；手册建议约 6 倍焦距，太短容易追迹失败。THSTART 会同时改写空气间隔，生成时 ASTART 一定排在它后面。PDIST 时 RSTART 不生效。RANDOM 时 RSTART 只取第一个值，作为最短半径。</p>
+  <div class="row" style="margin-top:10px">
+    <label class="chk"><input id="afocal" type="checkbox"> AFOCAL 无焦（FNUM 改为末面 YA）</label>
+    <label class="chk"><input id="imm-on" type="checkbox"> IMMERSE 像方浸液</label>
+    <label class="f" id="w-imm1"><span>nd</span><input id="imm-n" type="number" step="any" class="w4"></label>
+    <label class="f" id="w-imm2"><span>vd</span><input id="imm-v" type="number" step="any" class="w4"></label>
+    <label class="chk"><input id="cov-on" type="checkbox"> COVER 盖玻片（占最后一片）</label>
+    <label class="f" id="w-cov1"><span>厚度</span><input id="cov-t" type="number" step="any" class="w4"></label>
+    <label class="f" id="w-cov2"><span>nd</span><input id="cov-n" type="number" step="any" class="w4"></label>
+    <label class="f" id="w-cov3"><span>vd</span><input id="cov-v" type="number" step="any" class="w4"></label>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <label class="chk"><input id="pla-on" type="checkbox"> PLASTIC 塑料面</label>
+    <label class="f" id="w-pla"><span>面号（空 = 全部面）</span><input id="pla" type="text" class="w8 mono"></label>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <label class="chk"><input id="gl-on" type="checkbox"> GLASS 指定正/负元件玻璃（不用模型玻璃）</label>
+    <label class="f" id="w-glp"><span>正元件</span><span class="row" style="gap:4px"><select id="glp-cat"></select><input id="glp" type="text" class="w8 mono" placeholder="FCD1"></span></label>
+    <label class="f" id="w-gln"><span>负元件</span><span class="row" style="gap:4px"><select id="gln-cat"></select><input id="gln" type="text" class="w8 mono" placeholder="E-FDS1"></span></label>
+  </div>
+  <p class="hint">GLASS 主要给红外或指定塑料用：两种都要给，搜索中不变玻璃，模型玻璃边界也就不起作用。目录字母：S Schott、O Ohara、H Hoya、F 法国康宁、U 特殊材料、C 自定义、G 成都光明、R 俄 LZOS、M 住田、N 尼康。</p>
+</section>
+
+<section class="card">
+  <h2>渐晕 <span class="kw">VFIELD n / hbar VIGYP VIGYN VIGX</span><label class="sw chk"><input id="vf-on" type="checkbox"> 启用</label><button type="button" class="ghost fold" id="vf-fold" aria-expanded="false" aria-controls="vf-body"><span class="chev" aria-hidden="true"></span><span class="lbl">展开</span></button></h2>
+  <p class="foldsum" id="vf-sum"></p>
+  <div id="vf-body">
+    <div class="row">
+      <label class="f"><span>渐晕起始视场</span><input id="vg-h0" type="number" step="any" min="0" max="0.95" class="w4"></label>
+      <label class="f"><span>全视场 Y-UPPER</span><input id="vg-u" type="number" step="any" min="0.05" max="1" class="w4"></label>
+      <label class="f"><span>全视场 Y-LOWER</span><input id="vg-l" type="number" step="any" min="0.05" max="1" class="w4"></label>
+      <label class="f"><span>全视场 X（弧矢保留比例 0–1）</span><input id="vg-x" type="number" step="any" min="0.05" max="1" class="w4"></label>
+      <div class="f"><span>曲线形状</span>
+        <div class="seg" id="vgshape"><button type="button" data-v="linear">线性</button><button type="button" data-v="parabola">平抛</button><button type="button" data-v="custom">自定义</button></div></div>
+      <label class="f" id="w-vgp"><span>幂次 p</span><input id="vg-p" type="number" step="any" min="0.5" max="6" class="w4"></label>
+      <label class="chk"><input id="vg-auto" type="checkbox"> 自动布点（9 行，向边缘加密）</label>
+      <label class="f" id="w-vgpts"><span>视场点</span><input id="vg-pts" type="text" class="w8 mono"></label>
+      <button type="button" id="vg-go" class="primary">生成 VFIELD</button>
+    </div>
+    <div class="tblwrap" style="margin-top:10px">
+      <table class="vf">
+        <thead><tr><th>HBAR</th><th>Y-UPPER<br><span class="mini">后组限制的边缘光线</span></th><th>Y-LOWER<br><span class="mini">前组限制的边缘光线</span></th><th>X</th><th>保留的光瞳</th><th></th></tr></thead>
+        <tbody id="vf-rows"></tbody>
+      </table>
+    </div>
+    <div class="row" style="margin-top:8px"><button type="button" id="vf-add">加一行</button><button type="button" id="vf-preset" title="一张示意用的渐晕表，上缘切得比下缘多">载入示例渐晕</button><span class="frac" id="vf-frac"></span></div>
+    <details class="imp" id="vf-imp" style="margin-top:10px">
+      <summary>从精修结果导入（FVF 输出或 .RLE 里的 VFIELD 段）</summary>
+      <textarea id="vf-imp-text" rows="7" placeholder=" VFIELD                6&#10;            0.000000      1.200000      1.200000      1.200000&#10;            0.300000      1.421285      0.884725      1.199079&#10; ..."></textarea>
+      <div class="row" style="margin-top:8px">
+        <label class="chk"><input id="vf-imp-clamp" type="checkbox" checked> 大于 1 的截到 1</label>
+        <button type="button" id="vf-imp-pick">选择 .RLE 文件</button><input id="vf-imp-file" type="file" accept=".rle,.RLE,.txt" hidden>
+        <button type="button" id="vf-imp-go" class="primary">导入到渐晕表</button>
+        <span class="mini" id="vf-imp-msg" role="status"></span>
+      </div>
+      <p class="hint">精修宏里 FVF 按硬口径算出的系数是相对 OBB 入瞳（YMP1）的。光阑面没加硬口径时，轴上会到 FVF 的搜索上限 1.2（实测三个值都是 1.200000），也就是说没有任何东西挡光。DSEARCH 里光阑按 FNUM 定大小，轴上就是 1，所以大于 1 的值要截到 1，不能整体除以轴上因子，否则硬口径实际挡掉的部分也会被放大。可以直接粘贴 SYNOPSYS 窗口里的 VFIELD 列表，也可以选 SAVE 出来的 .RLE 文件。</p>
+    </details>
+    <div class="vfchart">
+      <div class="vfchart-head"><b>渐晕曲线</b>
+        <div class="vleg" aria-hidden="true">
+          <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--s1)" stroke-width="3"/></svg>未渐晕光线比例 X·(上+下)/2</span>
+          <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--s2)" stroke-width="2"/></svg>Y-UPPER</span>
+          <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--s3)" stroke-width="2" stroke-dasharray="6 4"/></svg>Y-LOWER</span>
+          <span><svg width="22" height="8"><line x1="1" y1="4" x2="21" y2="4" stroke="var(--s4)" stroke-width="2" stroke-dasharray="2 3"/></svg>X</span>
+        </div></div>
+      <svg id="vf-chart" viewBox="0 0 640 300" role="img" aria-label="VFIELD 渐晕曲线"></svg>
+      <div class="vtip" id="vf-tip" hidden></div>
+    </div>
+    <p class="hint">曲线按 SYNOPSYS 的插值规则画：视场点之间直线、末点以外沿用末点。未渐晕比例 = 保留光瞳椭圆面积 / 满光瞳面积 = X·(上+下)/2，与 Zemax Vignetting Diagram 的纵轴同义。</p>
+    <p class="hint">曲线：系数 = 1 − (1 − 全视场值)·tᵖ，t =（视场 − 起始视场）/（1 − 起始视场）。p = 1 为线性，p = 2 为平抛（前段平、越靠边缘掉得越快），p 越大越"平到最后才掉"。系数是保留的光瞳比例（相对轴上入瞳半径）。光束高度 =（上+下）/2，中心偏移 =（上−下）/2，主光线随中心一起偏移。视场间线性插值，末点以外沿用末点。名字与常规作图相反：<b>Y-LOWER</b> 是被前组口径切的那条，<b>Y-UPPER</b> 是被后组切的那条。VFIELD 只影响评价与追迹，不会缩小镜片口径。</p>
+  </div>
+</section>
+
+<section class="card">
+  <h2>目标 <span class="kw">GOALS … END</span></h2>
+  <div class="row">
+    <label class="f"><span><b>FNUM</b></span><input id="fnum" type="number" step="any" class="w4"></label>
+    <label class="f"><span>权重（可空）</span><input id="fnum-w" type="number" step="any" class="w4"></label>
+    <label class="f"><span>后焦 <b>BACK</b></span><input id="back" type="number" step="any" class="w4"></label>
+    <label class="f"><span>权重</span><input id="back-w" type="number" step="any" class="w4"></label>
+    <label class="chk"><input id="back-set" type="checkbox"> SET（解算固定）</label>
+    <label class="f"><span>总长 <b>TOTL</b></span><input id="totl" type="number" step="any" class="w4"></label>
+    <label class="f"><span>权重</span><input id="totl-w" type="number" step="any" class="w4"></label>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <label class="f"><span>光阑初始位置 <b>STOP</b></span><select id="stop-pos"><option value="FIRST">FIRST</option><option value="MIDDLE">MIDDLE</option><option value="LAST">LAST</option><option value="FIX">FIX 面号</option><option value="TELE">TELE 远心（需 OBA）</option></select></label>
+    <label class="f" id="w-stopfix"><span>FIX 面号（V16 总是实光阑）</span><input id="stop-fixn" type="number" class="w4"></label>
+    <label class="chk"><input id="stop-free" type="checkbox"> STOP FREE</label>
+    <label class="chk"><input id="stop-real" type="checkbox"> STOP REAL</label>
+    <label class="f"><span>孔径光线权重 <b>RT</b></span><input id="rt" type="number" step="any" class="w4"></label>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <label class="f"><span>视场 <b>FOV</b>（≤6 个）</span><input id="fov" type="text" class="w12 mono"></label>
+    <label class="f"><span>视场权重 <b>FWT</b></span><input id="fwt" type="text" class="w12 mono"></label>
+    <label class="f"><span>色差 <b>COLORS</b></span><select id="colors"><option value="3">3（三色）</option><option value="M">M</option><option value="MONO">MONO（单色）</option></select></label>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <label class="f"><span><b>NPASS</b></span><input id="npass" type="number" class="w4"></label>
+    <label class="chk"><input id="ann-on" type="checkbox"> ANNEAL</label>
+    <label class="f"><span>温度</span><input id="ann-t" type="number" step="any" class="w4"></label>
+    <label class="f"><span>冷却</span><input id="ann-c" type="number" step="any" class="w4"></label>
+    <label class="chk"><input id="ann-q" type="checkbox"> Q</label>
+    <label class="f"><span>趟数</span><input id="ann-n" type="number" class="w4"></label>
+    <label class="f"><span><b>SNAPSHOT</b></span><input id="snap" type="number" class="w4"></label>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <div class="f"><span>初筛方式</span>
+      <div class="seg" id="qmode"><button type="button" data-v="Q6">Q6</button><button type="button" data-v="QUICK">QUICK (Q3)</button><button type="button" data-v="Q0">Q0</button><button type="button" data-v="NONE">不用</button></div></div>
+    <label class="f" id="w-nq"><span>快速趟数 nq</span><input id="nq" type="number" class="w4"></label>
+    <label class="f" id="w-nr"><span>真实光线趟数 nr</span><input id="nr" type="number" class="w4"></label>
+    <label class="f"><span><b>KEEP</b></span><input id="keep" type="number" min="1" max="10" class="w4"></label>
+  </div>
+  <p class="hint" id="q-hint"></p>
+  <div class="row" style="margin-top:12px">
+    <label class="f"><span>阻尼 <b>DAMP</b></span><input id="damp" type="number" step="any" class="w4" placeholder="1.0"></label>
+    <label class="f"><span>优化器 <b>PSD</b></span><select id="psd"><option value="">默认</option><option value="II">PSD II</option><option value="III">PSD III</option></select></label>
+    <label class="f"><span>光线网格 <b>NGRID</b></span><input id="ngrid" type="number" min="1" max="50" class="w4" placeholder="4"></label>
+    <label class="f"><span>像质评价</span><select id="opdmode"><option value="">横向像差（默认）</option><option value="OPD">OPD 波像差</option><option value="TOPD">TOPD 横向 + OPD</option><option value="OPSHEAR">OPSHEAR 剪切（冲 MTF）</option><option value="TOSHEAR">TOSHEAR 横向 + 剪切</option></select></label>
+    <label class="f" id="w-wopd"><span>OPD 权重（空 = 自动）</span><input id="wopd" type="number" step="any" class="w4"></label>
+    <label class="f" id="w-shear"><span><b>SHEAR</b></span><input id="shear" type="number" step="any" class="w4" placeholder="0.25"></label>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <label class="f"><span>去敏 <b>DSENS</b></span><select id="dsens"><option value="0">不用</option><option value="1">1 · SAT 逐面球差贡献</option><option value="2">2 · ESA 逐元件球差贡献</option><option value="3">3 · SDU 逐面偏折（近轴）</option><option value="4">4 · RUD 逐面偏折（实际光线）</option><option value="5">5 · DAA 相邻面球差差值</option></select></label>
+    <label class="f" id="w-dsensw"><span>去敏权重</span><input id="dsens-w" type="number" step="any" class="w4"></label>
+    <label class="chk"><input id="revert" type="checkbox"> REVERT</label>
+    <label class="chk"><input id="track" type="checkbox"> TRACK</label>
+    <label class="chk"><input id="stats" type="checkbox"> STATISTICS</label>
+    <label class="chk"><input id="noload" type="checkbox"> NOLOAD</label>
+    <label class="f"><span>多核超时 <b>DELAY</b>（秒或 OFF）</span><input id="delay" type="text" class="w4 mono"></label>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <div class="f"><span>运行方式</span>
+      <div class="seg" id="runmode"><button type="button" data-v="GO">GO 完整搜索</button><button type="button" data-v="EVAL">EVAL 只跑一例</button><button type="button" data-v="SAMPLE">SAMPLE 只看起点</button></div></div>
+    <label class="chk"><input id="dplot" type="checkbox"> 结束后 <span class="mono">DSEARCH PLOT</span></label>
+  </div>
+  <p class="hint">DSENS 是去敏（降低公差敏感度）：往评价函数加一项 <span class="mono">M 0 w A 名称</span>，权重 w 不填为 1。五项都是平方和：SAT 逐面三阶球差贡献；ESA 逐元件三阶球差贡献；SDU 逐面近轴边缘光线角的变化（即偏折）；RUD 同上，用实际光线；DAA 相邻面之差。用 <span class="mono">THIRD SENS</span> 可以看当前镜头的各项数值。REVERT 只在 QUICK 下有用，会关掉多核。EVAL 用正负交替的一例检查输入；SAMPLE 只生成起点和优化宏、不优化。</p>
+  <label class="f" style="margin-top:8px"><span>其他 GOALS 行（原样写入，如 <b>RSTART</b>、<b>THSTART</b>）</span><textarea id="goalextra" rows="2"></textarea></label>
+</section>
+
+<section class="card">
+  <h2>模型玻璃边界 <span class="kw">PANT · CUL FUL CLL FLL CBOUNDS FBOUNDS</span><label class="sw chk"><input id="glm-on" type="checkbox"> 启用</label></h2>
+  <div id="glm-body">
+    <div class="row" style="margin-bottom:10px">
+      <label class="f"><span>写在哪里</span><select id="glm-where"><option value="special">SPECIAL PANT（推荐）</option><option value="pre">DSEARCH 前单独 PANT</option><option value="both">两处都写</option></select></label>
+    </div>
+    <div class="row">
+      <label class="f"><span><b>CUL</b>（默认 1.9）</span><input id="cul" type="number" step="any" class="w4"></label>
+      <label class="f"><span><b>FUL</b>（默认 1.92）</span><input id="ful" type="number" step="any" class="w4"></label>
+      <label class="f"><span><b>CLL</b>（默认 1.501）</span><input id="cll" type="number" step="any" class="w4"></label>
+      <label class="f"><span><b>FLL</b>（默认 1.501）</span><input id="fll" type="number" step="any" class="w4"></label>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label class="f"><span><b>CBOUNDS</b> nd1 vd1 nd2 vd2（可空）</span><input id="cbounds" type="text" class="w12 mono" placeholder="1.88 40.43 1.49 78.53"></label>
+      <label class="f"><span><b>FBOUNDS</b> nd1 vd1 nd2 vd2（可空）</span><input id="fbounds" type="text" class="w12 mono" placeholder="1.92 22.16 1.50 62.67"></label>
+      <label class="chk"><input id="glm-restore" type="checkbox"> 结束后恢复默认</label>
+    </div>
+    <p class="hint">CUL 要在 <span class="mono">VLIST GLM</span> 之前生效。SPECIAL PANT 的行被插在 DSEARCH 生成的每个 PANT 最前面，排在 VLIST 之前；它还会写进 DSEARCH_OPT.MAC，并随配置传给多核子进程，所以推荐写这里。PANT 开头先载入全局的 CUL，CUL 指令直接改写 VLIST GLM 读取的那个值。这些设置是全局的，一直有效到重启或切换目录（CHDIR），用完要恢复。默认冕牌线与火石线在 nd≈2.09 相交。</p>
+  </div>
+</section>
+
+<section class="card">
+  <h2>附加变量与目标 <span class="kw">SPECIAL PANT ≤40 行 · SPECIAL AANT ≤100 行</span></h2>
+  <div class="row" style="align-items:stretch">
+    <label class="f" style="flex:1 1 260px"><span>SPECIAL PANT</span><textarea id="spant" rows="4"></textarea></label>
+    <label class="f" style="flex:1 1 260px"><span>SPECIAL AANT</span><textarea id="saant" rows="4"></textarea></label>
+  </div>
+  <p class="hint">SPECIAL PANT 被插在生成的 PANT 最前面（VLIST 之前）；SPECIAL AANT 被拼在自动生成的 GSR/GNR 之后、END 之前，写在这里的 <span class="mono">VSET</span> 只影响写在它后面的光线集，作用不到自动光线集。每行超过 90 列会被截断。</p>
+</section>
+
+<section class="card" id="opt-card">
+  <h2>精修宏 <span class="kw">GET/FETCH · CHG · FVF · PANT · AANT · SYNOPSYS · ARGLASS</span></h2>
+  <p class="hint" style="margin-top:0">这是 DSEARCH 跑完后的第二步：取出一个结果，加硬口径来实现渐晕，用同一套目标再优化，最后自动换成实际玻璃。变量、光线、视场、权重、波长都沿用上面的设置。在右侧切到"精修宏"查看。</p>
+  <div class="row" style="margin-top:8px">
+    <label class="f"><span>宏文件名</span><input id="opt-fname" type="text" class="w8"></label>
+    <div class="f"><span>起始镜头</span>
+      <div class="seg" id="optsrc"><button type="button" data-v="lib">镜库位置 GET</button><button type="button" data-v="file">文件 FETCH</button><button type="button" data-v="cur">当前镜头</button></div></div>
+    <label class="f" id="w-optlib"><span>位置</span><input id="opt-lib" type="number" min="1" max="10" class="w4"></label>
+    <label class="f" id="w-optfile"><span>文件名</span><input id="opt-file" type="text" class="w8 mono" placeholder="DSEARCH01"></label>
+  </div>
+
+  <h3 class="sub3">硬口径与实光阑 <span class="kw">CHG … END</span></h3>
+  <div class="row">
+    <label class="f"><span>实光阑面 <b>APS −s</b>（空 = 保持 YP1 浮动光阑）</span><input id="opt-aps" type="number" min="1" class="w4"></label>
+    <label class="chk"><input id="opt-cfree" type="checkbox"> 先 CFREE 清掉其他硬口径</label>
+  </div>
+  <div class="tblwrap" style="margin-top:8px"><table class="vf cao"><thead><tr><th>面号</th><th>硬口径 CAO（半口径）</th><th>作用</th><th></th></tr></thead><tbody id="cao-rows"></tbody></table></div>
+  <div class="row" style="margin-top:6px"><button type="button" id="cao-add">加一个面</button><button type="button" id="cao-preset" title="示例：面 1 切下缘（Y-LOWER）、面 12 切上缘（Y-UPPER），面 7 是光阑">载入示例（面 1 / 7 / 12）</button></div>
+  <div class="row" style="margin-top:10px">
+    <label class="chk"><input id="opt-fvf" type="checkbox"> FVF 按硬口径重算渐晕</label>
+    <label class="f" id="w-fvf"><span>FVF 视场</span><input id="opt-fvfh" type="text" class="w12 mono"></label>
+  </div>
+
+  <h3 class="sub3">优化 <span class="kw">PANT · AANT · SNAP/DAMP · SYNOPSYS</span></h3>
+  <div class="row">
+    <label class="f"><span>每轮趟数</span><input id="opt-pass" type="number" min="1" class="w4"></label>
+    <label class="f"><span>轮数</span><input id="opt-loops" type="number" min="1" max="10" class="w4"></label>
+    <label class="f"><span><b>SNAP</b></span><input id="opt-snap" type="number" class="w4"></label>
+    <label class="f"><span><b>DAMP</b></span><input id="opt-damp" type="number" step="any" class="w4"></label>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <label class="chk"><input id="opt-asph" type="checkbox"> 沿用上面的非球面面号和项数</label>
+    <label class="chk"><input id="opt-glm" type="checkbox"> 变模型玻璃 VLIST GLM</label>
+    <label class="chk"><input id="opt-targ" type="checkbox"> 带 BACK/TOTL 与 SPECIAL AANT 目标</label>
+  </div>
+  <h3 class="sub3">厚度控制 <span class="kw">AFE · AGE · AAE · AEC · ACC · ACM</span></h3>
+  <div class="row">
+    <label class="f"><span>玻璃边厚在哪量</span><select id="thk-mode"><option value="AFE">口径处 AFE（推荐）</option><option value="AGE">边缘光线处 AGE</option><option value="AEC">边缘光线处 AEC（玻璃、空气同一下限）</option></select></label>
+    <label class="f"><span>玻璃最小边厚</span><input id="thk-g" type="number" step="any" class="w4" placeholder="1 mm"></label>
+    <label class="f"><span>权重</span><input id="thk-gw" type="number" step="any" class="w4" placeholder="1"></label>
+    <label class="f" id="w-thka"><span>空气最小边厚 <b>AAE</b></span><input id="thk-a" type="number" step="any" class="w4" placeholder="1 mm"></label>
+    <label class="f" id="w-thkaw"><span>权重</span><input id="thk-aw" type="number" step="any" class="w4" placeholder="1"></label>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <label class="f"><span>最大中心厚 <b>ACC</b></span><input id="thk-cmax" type="number" step="any" class="w4" placeholder="1 in"></label>
+    <label class="f"><span>权重</span><input id="thk-cmaxw" type="number" step="any" class="w4" placeholder="1"></label>
+    <label class="f"><span>最小中心厚 <b>ACM</b></span><input id="thk-cmin" type="number" step="any" class="w4"></label>
+    <label class="f"><span>权重</span><input id="thk-cminw" type="number" step="any" class="w4" placeholder="1"></label>
+    <label class="chk"><input id="thk-ds" type="checkbox"> 也写进 DSEARCH 的 SPECIAL AANT（未实测）</label>
+  </div>
+  <p class="hint">AEC、AGE、AAE 在全视场上、下边缘光线处量边厚，并按 VFIELD 缩小光瞳（手册 §10.3.7）。带渐晕时，量的位置在镜片实际外缘之内，外圈会变薄甚至成负值。AFE 在口径（CAO + MARGIN）处量玻璃边厚。V16 的处理：AFE 与 AGE 互斥，后写的关掉前一个；AFE 可以和 AAE 同时用；AFE 或 AAE 写在 AEC 之后，会把 AEC 的值转给另一类边。不填目标 = 程序默认（边厚 1 mm，最大中心厚 1 英寸，最小中心厚 1 个镜头单位），不填权重 = 1；手册建议先用小权重。</p>
+  <label class="f" style="margin-top:8px"><span>精修时追加的 AANT 行（如口径、长度约束）</span><textarea id="opt-aant" rows="2"></textarea></label>
+
+  <h3 class="sub3">换实际玻璃 <span class="kw">STORE · ARGLASS</span><label class="sw chk"><input id="arg-on" type="checkbox"> 启用</label></h3>
+  <div id="arg-body">
+    <div class="row">
+      <label class="f"><span>存镜库位置 LIB</span><input id="arg-lib" type="number" min="1" max="10" class="w4"></label>
+      <label class="f"><span>目录 <b>CAT</b></span><select id="arg-cat"></select></label>
+      <div class="f"><span>替换顺序</span>
+        <div class="seg" id="argorder"><button type="button" data-v="SORT">SORT</button><button type="button" data-v="SEQUENTIAL">SEQUENTIAL</button><button type="button" data-v="REVERSE">REVERSE</button></div></div>
+      <label class="f"><span>面范围 INCLUDE（空 = 全部）</span><span class="row" style="gap:4px;flex-wrap:nowrap"><input id="arg-i1" type="number" min="1" class="w4"><span class="mini">到</span><input id="arg-i2" type="number" min="1" class="w4"></span></label>
+      <label class="f"><span>排除面 EXCLUDE</span><input id="arg-exc" type="text" class="w8 mono"></label>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label class="f"><span>PRICE（×N-BK7）</span><input id="arg-price" type="number" step="any" class="w4"></label>
+      <label class="f"><span>BUBBLE</span><input id="arg-bub" type="number" class="w4"></label>
+      <label class="f"><span>STAIN</span><input id="arg-sta" type="number" class="w4"></label>
+      <label class="f"><span>ACID</span><input id="arg-aci" type="number" class="w4"></label>
+      <label class="f"><span>ALKALI</span><input id="arg-alk" type="number" class="w4"></label>
+      <label class="f"><span>HUMIDITY</span><input id="arg-hum" type="number" class="w4"></label>
+      <label class="chk"><input id="arg-pref" type="checkbox"> PREF 优选</label>
+      <label class="chk"><input id="arg-safe" type="checkbox"> SAFE 无铅无砷</label>
+      <label class="chk"><input id="arg-iline" type="checkbox"> ILINE</label>
+    </div>
+    <p class="hint">ARGLASS 逐个把模型玻璃换成目录里最接近的实际玻璃，每换一片重新优化一次，起始镜头和结果都存进 LIB。它必须紧跟在一次正常的 SYNOPSYS 优化之后（V16 报 "CAN ONLY BE RUN IMMEDIATELY FOLLOWING A NORMAL OPTIMIZATION"），所以生成时最后一轮结束在 SYNOPSYS，接着 STORE 和 ARGLASS。</p>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <label class="chk"><input id="opt-cap" type="checkbox"> 结束后 CAP 列出口径</label>
+    <label class="chk"><input id="opt-eval" type="checkbox"> EVAL 显示评价函数</label>
+    <label class="f"><span>SAVE 文件名（可空）</span><input id="opt-save" type="text" class="w8 mono"></label>
+  </div>
+</section>
+
+</div>
+
+<div class="col out">
+  <section class="card">
+    <div class="outhead"><div class="seg" id="outview" role="group" aria-label="查看哪个宏"><button type="button" data-v="ds">DSEARCH 宏</button><button type="button" data-v="opt">精修宏</button></div><span class="fn" id="out-fn"></span><span class="sp"></span>
+      <span class="toast" id="toast" role="status" aria-live="polite"></span>
+      <button type="button" id="btn-copy" class="primary">复制</button>
+      <button type="button" id="btn-dl" hidden>保存 .MAC</button></div>
+    <div class="listing"><pre id="out"></pre></div>
+    <p class="hint">在 SYNOPSYS 命令窗口输入 <span class="mono">EM 文件名</span> 运行（宏文件放在当前目录，一般是 SYNOPSYS 的 USER 文件夹）。先跑 DSEARCH 宏，挑好结果后再跑精修宏。</p>
+  </section>
+  <section class="card">
+    <h2>检查 <span class="kw">按手册与实测整理的规则</span></h2>
+    <div class="summary" id="chk-sum"></div>
+    <ul class="checks" id="checks"></ul>
+  </section>
+</div>
+</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const STORE='dsearch-builder-v1_public';
+
+const VF_PRESET_EXAMPLE=[['0.0','1.0','1.0','1.0'],['0.3','0.995','0.998','0.999'],['0.5','0.985','0.992','0.997'],['0.7','0.95','0.97','0.99'],['0.85','0.88','0.93','0.98'],['1.0','0.75','0.86','0.96']]; // made-up example table, upper rim cut more
+const DEFAULTS={
+  llib:1, quiet:true, coreOn:false, core:14, fname:'MYSEARCH', comments:true,
+  sid:'DSEARCH', units:'MM', epmode:'calc', yimg:'14.2', efl:'20', ymp1:'', upp0:'', wavl:'0.6563 0.5876 0.4861', wt:'', sysextra:'',
+  twFw100:false, twGiht:false, twDist:false, distMode:'LUA', distVal:'3', distW:'', distAll:true,
+  nel:5, npos:'', signmode:'none', signs:[], aspSurf:[], asphQ:false, asphR:false, asphN:'3',
+  uiV2:true, vfOpen:false,
+  vfOn:false, vf:JSON.parse(JSON.stringify(VF_PRESET_EXAMPLE)), vgH0:'0.5', vgU:'0.6', vgL:'1.0', vgX:'1.0', vgPts:'0.5 0.7 0.85 1.0', vgShape:'parabola', vgP:'2', vgAuto:true,
+  fnum:'4', fnumW:'', back:'', backW:'0.1', backSet:false, totl:'', totlW:'0.1',
+  stopPos:'MIDDLE', stopFixN:'', stopFree:true, stopReal:false, rt:'0.5',
+  fov:'0.0 0.3 0.5 0.7 1.0', fwt:'5.0 3.0 2.0 1.5 1.0', colors:'3', npass:'40', annOn:true, annT:'200', annC:'20', annQ:true, annN:'50', snap:'10',
+  qmode:'QUICK', nq:'10', nr:'20', keep:'', pdist:false, goalextra:'',
+  glmOn:false, cul:'1.9', ful:'1.92', cll:'', fll:'', cbounds:'', fbounds:'', glmRestore:true,
+  spant:'', saant:'',
+  // starting structure / extra GOALS keywords
+  rstart:'', thstart:'', astart:'', nstN:'', nstV:'', randOn:false, randN:'200', csd:false,
+  afocal:false, immOn:false, immN:'', immV:'', covOn:false, covT:'', covN:'', covV:'', plaOn:false, pla:'',
+  glOn:false, glpCat:'H', glp:'', glnCat:'H', gln:'',
+  damp:'', psd:'', ngrid:'', opdmode:'', wopd:'', shear:'', dsens:'0', dsensW:'', revert:false, track:false, stats:false, noload:false, delay:'', runmode:'GO', dplot:false,
+  glmWhere:'special', outview:'ds',
+  // refinement macro
+  optFname:'OPT', optSrc:'lib', optLib:'', optFile:'DSEARCH01', optAps:'', optCfree:true, cao:[], optFvf:false, optFvfh:'0 .3 .5 .7 .85 1',
+  optPass:'40', optLoops:'2', optSnap:'10', optDamp:'1.0', optAsph:true, optGlm:true, optTarg:true, optAant:'',
+  argOn:false, argLib:'3', argCat:'H', argOrder:'SORT', argI1:'', argI2:'', argExc:'', argPrice:'', argBub:'', argSta:'', argAci:'', argAlk:'', argHum:'', argPref:false, argSafe:false, argIline:false,
+  optCap:true, optEval:true, optSave:'',
+  craOn:false, craMax:'30', craW:'', craAll:true,
+  thkMode:'AFE', thkG:'1.0', thkGW:'', thkA:'1.0', thkAW:'', thkCmax:'', thkCmaxW:'', thkCmin:'', thkCminW:'', thkDs:false
+};
+const CAO_PRESET_EXAMPLE=[['1','11'],['7','6.5'],['12','9']]; // example: s1 cuts Y-LOWER, s12 cuts Y-UPPER, s7 = real stop
+const GCATS=[['S','S Schott'],['O','O Ohara'],['H','H Hoya'],['F','F 康宁'],['U','U 特殊材料'],['C','C 自定义'],['G','G 成都光明'],['R','R LZOS'],['M','M 住田'],['N','N 尼康']];
+const ACATS=[['H','H Hoya'],['S','S Schott'],['O','O Ohara'],['F','F 康宁'],['G','G 成都光明'],['R','R LZOS'],['M','M 住田'],['N','N 尼康'],['U','U 特殊材料（塑料）'],['P','P 当前目录的私有目录']];
+for(const [id,list] of [['glp-cat',GCATS],['gln-cat',GCATS],['arg-cat',ACATS]]) $(id).innerHTML=list.map(([v,t])=>`<option value="${v}">${t}</option>`).join('');
+const SAMPLE=Object.assign({},DEFAULTS,{
+  llib:1, quiet:true, coreOn:false, core:14, fname:'EXAMPLE', comments:true,
+  sid:'EXAMPLE 35MM F2.8', units:'MM', epmode:'calc', yimg:'21.6', efl:'35', ymp1:'', upp0:'', wavl:'0.6563 0.5876 0.4861',
+  nel:6, npos:'', signmode:'none', signs:['','','','','',''], aspSurf:[], asphQ:false, asphR:false, asphN:'4',
+  vfOn:false, vfOpen:false, vf:JSON.parse(JSON.stringify(VF_PRESET_EXAMPLE)),
+  vgH0:'0.5', vgU:'0.6', vgL:'0.85', vgX:'0.97', vgPts:'0.5 0.7 0.85 1.0',
+  fnum:'2.8', fnumW:'', back:'18', backW:'0.1', backSet:false, totl:'45', totlW:'0.1',
+  stopPos:'MIDDLE', stopFixN:'', stopFree:true, stopReal:false, rt:'0.5',
+  fov:'0.0 0.5 0.7 0.85 1.0', fwt:'5.0 2.0 1.5 1.0 1.0', colors:'3', npass:'40', annOn:true, annT:'200', annC:'20', annQ:true, annN:'50', snap:'10',
+  qmode:'QUICK', nq:'10', nr:'20', keep:'', pdist:false, goalextra:'',
+  glmOn:true, cul:'2.0', ful:'1.92', cll:'', fll:'', cbounds:'', fbounds:'', glmRestore:true,
+  spant:'', saant:'', glmWhere:'special',
+  optFname:'EXAMPLE_OPT', optSrc:'lib', optLib:'', optAps:'7', optCfree:true, cao:JSON.parse(JSON.stringify(CAO_PRESET_EXAMPLE)), optFvf:true, optFvfh:'0 .5 .7 .85 1',
+  optPass:'40', optLoops:'2', optSnap:'10', optDamp:'1.0', optAsph:true, optGlm:true, optTarg:true, argOn:false, argLib:'3', argCat:'H', optSave:'EXAMPLE_OPT'
+});
+
+let S=load()||JSON.parse(JSON.stringify(SAMPLE));
+
+function load(){try{const t=localStorage.getItem(STORE);if(!t)return null;const p=JSON.parse(t), o=Object.assign({},DEFAULTS,p);
+  if(!p.uiV2){ o.vfOn=false; o.vfOpen=false; } // one-time: vignetting now starts off and folded
+  if(p.twDist&&p.distMode===undefined){ o.distMode='M'; o.distVal='0'; o.distAll=false; } // old checkbox meant zero distortion at full field
+  if(o.epmode==='efl')o.epmode='calc'; if(o.epmode==='ymp1')o.epmode='obb'; return o;}catch(e){return null;}}
+function save(){try{localStorage.setItem(STORE,JSON.stringify(S));}catch(e){}}
+
+/* ---------- binding ---------- */
+const BIND=[['llib','llib','num'],['quiet','quiet','chk'],['coreOn','core-on','chk'],['core','core','num'],['fname','fname'],['comments','comments','chk'],
+ ['sid','sid'],['units','units'],['yimg','yimg'],['efl','efl'],['ymp1','ymp1'],['upp0','upp0'],['wavl','wavl'],['wt','wt'],['sysextra','sysextra'],
+ ['twFw100','tw-fw100','chk'],['twGiht','tw-giht','chk'],['twDist','tw-dist','chk'],['distMode','dist-mode'],['distVal','dist-val'],['distW','dist-w'],['distAll','dist-all','chk'],
+ ['nel','nel','num'],['npos','npos'],['asphQ','asph-q','chk'],['asphR','asph-r','chk'],['asphN','asph-n'],
+ ['vfOn','vf-on','chk'],['vgH0','vg-h0'],['vgU','vg-u'],['vgL','vg-l'],['vgX','vg-x'],['vgPts','vg-pts'],['vgP','vg-p'],['vgAuto','vg-auto','chk'],
+ ['fnum','fnum'],['fnumW','fnum-w'],['back','back'],['backW','back-w'],['backSet','back-set','chk'],['totl','totl'],['totlW','totl-w'],
+ ['stopPos','stop-pos'],['stopFixN','stop-fixn'],['stopFree','stop-free','chk'],['stopReal','stop-real','chk'],['rt','rt'],
+ ['fov','fov'],['fwt','fwt'],['colors','colors'],['npass','npass'],['annOn','ann-on','chk'],['annT','ann-t'],['annC','ann-c'],['annQ','ann-q','chk'],['annN','ann-n'],['snap','snap'],
+ ['nq','nq'],['nr','nr'],['keep','keep'],['pdist','pdist','chk'],['goalextra','goalextra'],
+ ['glmOn','glm-on','chk'],['cul','cul'],['ful','ful'],['cll','cll'],['fll','fll'],['cbounds','cbounds'],['fbounds','fbounds'],['glmRestore','glm-restore','chk'],
+ ['spant','spant'],['saant','saant'],
+ ['rstart','rstart'],['thstart','thstart'],['astart','astart'],['nstN','nst-n'],['nstV','nst-v'],['randOn','rand-on','chk'],['randN','rand-n'],['csd','csd','chk'],
+ ['afocal','afocal','chk'],['immOn','imm-on','chk'],['immN','imm-n'],['immV','imm-v'],['covOn','cov-on','chk'],['covT','cov-t'],['covN','cov-n'],['covV','cov-v'],['plaOn','pla-on','chk'],['pla','pla'],
+ ['glOn','gl-on','chk'],['glpCat','glp-cat'],['glp','glp'],['glnCat','gln-cat'],['gln','gln'],
+ ['damp','damp'],['psd','psd'],['ngrid','ngrid'],['opdmode','opdmode'],['wopd','wopd'],['shear','shear'],['dsens','dsens'],['dsensW','dsens-w'],
+ ['revert','revert','chk'],['track','track','chk'],['stats','stats','chk'],['noload','noload','chk'],['delay','delay'],['dplot','dplot','chk'],['glmWhere','glm-where'],
+ ['optFname','opt-fname'],['optLib','opt-lib'],['optFile','opt-file'],['optAps','opt-aps'],['optCfree','opt-cfree','chk'],['optFvf','opt-fvf','chk'],['optFvfh','opt-fvfh'],
+ ['optPass','opt-pass'],['optLoops','opt-loops'],['optSnap','opt-snap'],['optDamp','opt-damp'],['optAsph','opt-asph','chk'],['optGlm','opt-glm','chk'],['optTarg','opt-targ','chk'],['optAant','opt-aant'],
+ ['argOn','arg-on','chk'],['argLib','arg-lib'],['argCat','arg-cat'],['argI1','arg-i1'],['argI2','arg-i2'],['argExc','arg-exc'],['argPrice','arg-price'],
+ ['argBub','arg-bub'],['argSta','arg-sta'],['argAci','arg-aci'],['argAlk','arg-alk'],['argHum','arg-hum'],['argPref','arg-pref','chk'],['argSafe','arg-safe','chk'],['argIline','arg-iline','chk'],
+ ['optCap','opt-cap','chk'],['optEval','opt-eval','chk'],['optSave','opt-save'],
+ ['craOn','cra-on','chk'],['craMax','cra-max'],['craW','cra-w'],['craAll','cra-all','chk'],
+ ['thkMode','thk-mode'],['thkG','thk-g'],['thkGW','thk-gw'],['thkA','thk-a'],['thkAW','thk-aw'],['thkCmax','thk-cmax'],['thkCmaxW','thk-cmaxw'],['thkCmin','thk-cmin'],['thkCminW','thk-cminw'],['thkDs','thk-ds','chk']];
+
+function toForm(){
+  for(const [k,id,t] of BIND){const el=$(id); if(t==='chk') el.checked=!!S[k]; else el.value=(S[k]??'');}
+  $('fnum2').value=S.fnum??'';
+  setSeg('epmode',S.epmode); setSeg('vgshape',S.vgShape||'parabola'); setSeg('signmode',S.signmode); setSeg('qmode',S.qmode);
+  for(const [seg,k] of Object.entries(SEGKEY)) if(!['epmode','vgshape','signmode','qmode'].includes(seg)) setSeg(seg,S[k]);
+  renderElems(); renderVF(); renderCAO();
+}
+function fromForm(){
+  for(const [k,id,t] of BIND){const el=$(id); if(t==='chk') S[k]=el.checked; else if(t==='num') S[k]=el.value===''?'':Number(el.value); else S[k]=el.value;}
+}
+function setSeg(id,v){for(const b of $(id).querySelectorAll('button')) b.setAttribute('aria-pressed',String(b.dataset.v===v));}
+const SEGKEY={epmode:'epmode',signmode:'signmode',qmode:'qmode',vgshape:'vgShape',runmode:'runmode',outview:'outview',optsrc:'optSrc',argorder:'argOrder'};
+for(const [seg,k] of Object.entries(SEGKEY)){
+  $(seg).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+    S[k]=b.dataset.v; setSeg(seg,b.dataset.v); renderElems(); update();});
+}
+document.getElementById('form').addEventListener('input',e=>{
+  if(e.target.closest('#vf-rows')||e.target.closest('#cao-rows')||e.target.closest('#vf-imp')||e.target.id==='imp-text') return;
+  if(e.target.id==='fnum2') $('fnum').value=e.target.value;
+  if(e.target.id==='fnum') $('fnum2').value=e.target.value;
+  fromForm();
+  if(e.target.id==='nel') renderElems();
+  update();
+});
+document.getElementById('form').addEventListener('change',e=>{if(e.target.id==='imp-text')return; fromForm(); update();});
+
+/* ---------- elements / surfaces ---------- */
+function nEl(){const n=parseInt(S.nel,10);return Number.isFinite(n)?Math.max(1,Math.min(21,n)):1;}
+function renderElems(){
+  const n=nEl();
+  while(S.signs.length<n) S.signs.push('');
+  S.signs.length=n;
+  S.aspSurf=S.aspSurf.filter(s=>s>=1&&s<=2*n);
+  const box=$('elems'); box.innerHTML='';
+  const signOn=S.signmode!=='none';
+  for(let k=1;k<=n;k++){
+    const d=document.createElement('div'); d.className='el';
+    const s1=2*k-1,s2=2*k;
+    const sg=S.signs[k-1]||'';
+    const opts=S.signmode==='single'?[['P','P'],['N','N']]:[['','任'],['P','P'],['N','N']];
+    d.innerHTML=`<div class="eh"><span>元件</span><b>${k}</b></div>
+      <div class="sign ${signOn?'':'disabled'}" role="group" aria-label="元件 ${k} 正负">${opts.map(([v,t])=>`<button type="button" data-k="${k}" data-sg="${v}" aria-pressed="${sg===v}">${t}</button>`).join('')}</div>
+      <div class="surfs">${[s1,s2].map(s=>`<button type="button" class="surf" data-s="${s}" aria-pressed="${S.aspSurf.includes(s)}" title="面 ${s}：点选为非球面">${s}</button>`).join('')}</div>`;
+    box.appendChild(d);
+  }
+  $('sign-legend').textContent= S.signmode==='single'?'SINGLE：每片都要指定 P 或 N。':S.signmode==='filter'?'FILTER：P/N 锁定，"任" 不约束。':'';
+}
+$('elems').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.s){const s=+b.dataset.s; const i=S.aspSurf.indexOf(s); if(i>=0) S.aspSurf.splice(i,1); else S.aspSurf.push(s); S.aspSurf.sort((a,b)=>a-b);}
+  else if(b.dataset.k){S.signs[+b.dataset.k-1]=b.dataset.sg;}
+  renderElems(); update();
+});
+$('asph-clear').addEventListener('click',()=>{S.aspSurf=[];renderElems();update();});
+
+/* ---------- VFIELD ---------- */
+function pupilSVG(u,l,x){
+  u=num(u);l=num(l);x=num(x);
+  const ok=[u,l,x].every(v=>Number.isFinite(v)&&v>0);
+  const R=15,cx=20,cy=19;
+  if(!ok) return `<svg class="pup" width="40" height="38" viewBox="0 0 40 38" aria-hidden="true"><circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--line-strong)"/></svg>`;
+  const top=cy-Math.min(u,1.2)*R, bot=cy+Math.min(l,1.2)*R, rx=Math.min(x,1.2)*R;
+  const id='c'+Math.random().toString(36).slice(2,8);
+  return `<svg class="pup" width="40" height="38" viewBox="0 0 40 38" aria-hidden="true">
+    <defs><clipPath id="${id}"><rect x="${cx-rx}" y="${top}" width="${2*rx}" height="${bot-top}"/></clipPath></defs>
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="var(--cut)" stroke="var(--line-strong)"/>
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="var(--keep)" fill-opacity=".85" clip-path="url(#${id})"/>
+    <line x1="${cx-R-2}" y1="${cy}" x2="${cx+R+2}" y2="${cy}" stroke="var(--muted)" stroke-width=".6" stroke-dasharray="2 2"/></svg>`;
+}
+function renderVF(){
+  const tb=$('vf-rows'); tb.innerHTML='';
+  S.vf.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`${r.map((v,j)=>`<td><input type="text" class="num" data-i="${i}" data-j="${j}" value="${esc(v)}" aria-label="第 ${i+1} 行第 ${j+1} 列"></td>`).join('')}
+      <td>${pupilSVG(r[1],r[2],r[3])}</td><td><button type="button" class="ghost" data-del="${i}" aria-label="删除第 ${i+1} 行">删除</button></td>`;
+    tb.appendChild(tr);
+  });
+  $('vf-body').classList.toggle('disabled',!S.vfOn);
+}
+$('vf-rows').addEventListener('input',e=>{const t=e.target; if(t.dataset.i===undefined)return; S.vf[+t.dataset.i][+t.dataset.j]=t.value;
+  const cell=t.closest('tr').children[4]; const r=S.vf[+t.dataset.i]; cell.innerHTML=pupilSVG(r[1],r[2],r[3]); update();});
+$('vf-rows').addEventListener('click',e=>{const b=e.target.closest('button[data-del]'); if(!b)return; S.vf.splice(+b.dataset.del,1); renderVF(); update();});
+$('vf-preset').addEventListener('click',()=>{S.vf=JSON.parse(JSON.stringify(VF_PRESET_EXAMPLE)); S.vfOn=true; S.vfOpen=true; $('vf-on').checked=true; renderVF(); update(); flash('已载入示例渐晕（6 行）');});
+$('vf-fold').addEventListener('click',()=>{S.vfOpen=!S.vfOpen; update();});
+/* import VFIELD from an FVF listing or an RLE file (refinement result) */
+function parseVFText(txt){
+  const L=String(txt||'').split(/\r?\n/);
+  const nums=l=>{ const t=l.trim().split(/\s+/); return t.length===4&&t.every(x=>/^[-+]?(\d+\.?\d*|\.\d+)([EeDd][-+]?\d+)?$/.test(x))?t.map(x=>+x.replace(/[Dd]/,'E')):null; };
+  const k=L.findIndex(l=>/^\s*VFIELD\s+\d+\s*$/i.test(l));
+  if(k>=0){ const n=parseInt(L[k].trim().split(/\s+/)[1],10), rows=[];
+    for(let j=k+1;j<L.length&&rows.length<n;j++){ const r=nums(L[j]); if(r) rows.push(r); else if(L[j].trim()) break; }
+    return rows; }
+  return L.map(nums).filter(Boolean);
+}
+function importVF(txt){
+  const msg=$('vf-imp-msg'), rows=parseVFText(txt).sort((a,b)=>a[0]-b[0]);
+  if(!rows.length){ msg.textContent='没找到 VFIELD 数据（每行要 4 个数：HBAR  Y-UPPER  Y-LOWER  X）。'; msg.style.color='var(--err)'; return; }
+  if(rows.length>9){ msg.textContent=`有 ${rows.length} 行，VFIELD 最多 9 行。`; msg.style.color='var(--err)'; return; }
+  if(rows.some(r=>r[0]<0||r[0]>1||r.slice(1).some(v=>!(v>0)))){ msg.textContent='视场要在 0–1，系数要大于 0。'; msg.style.color='var(--err)'; return; }
+  const clamp=$('vf-imp-clamp').checked; let cut=0, mx=0;
+  const r3=x=>{let s=(+x).toFixed(3).replace(/0+$/,'').replace(/\.$/,'.0'); return s;};
+  const out=rows.map(r=>[r[0],...r.slice(1).map(v=>{ if(v>1){ mx=Math.max(mx,v); if(clamp){cut++; return 1;} } return v; })]);
+  const ax=rows[0][0]===0?rows[0].slice(1):null;
+  S.vf=out.map(r=>[r3(r[0]),r3(r[1]),r3(r[2]),r3(r[3])]); S.vfOn=true; S.vfOpen=true; $('vf-on').checked=true;
+  renderVF(); update();
+  let t=`已导入 ${rows.length} 行`;
+  if(cut) t+=`，${cut} 个大于 1 的值截到了 1（最大 ${mx.toFixed(3)}）`;
+  else if(mx>1) t+=`；注意有大于 1 的值（最大 ${mx.toFixed(3)}），会放大入瞳`;
+  if(ax&&ax.every(v=>Math.abs(v-1.2)<1e-6)) t+='。轴上 1.2 = 光阑没有硬口径，FVF 搜到上限都没挡光';
+  else if(ax&&ax.some(v=>v<0.999)) t+='。轴上小于 1：硬口径挡到了轴上光束，等于 F 数变大，先检查口径';
+  msg.textContent=t+'。'; msg.style.color='var(--ok)';
+}
+$('vf-imp-go').addEventListener('click',()=>importVF($('vf-imp-text').value));
+$('vf-imp-pick').addEventListener('click',()=>$('vf-imp-file').click());
+$('vf-imp-file').addEventListener('change',e=>{ const f=e.target.files&&e.target.files[0]; if(!f) return;
+  const rd=new FileReader(); rd.onload=()=>{ $('vf-imp-text').value=String(rd.result); importVF(rd.result); }; rd.readAsText(f); e.target.value=''; });
+$('vf-on').addEventListener('change',()=>{ if($('vf-on').checked) S.vfOpen=true; update(); });
+$('vf-add').addEventListener('click',()=>{const last=S.vf[S.vf.length-1]; S.vf.push(last?[...last]:['1.0','1.0','1.0','1.0']); renderVF(); update();});
+$('vg-go').addEventListener('click',()=>{
+  fromForm();
+  const h0=num(S.vgH0),U=num(S.vgU),L=num(S.vgL),X=num(S.vgX);
+  const p=S.vgShape==='linear'?1:S.vgShape==='parabola'?2:num(S.vgP);
+  if(![h0,U,L,X].every(Number.isFinite)){flash('渐变参数不完整',true);return;}
+  if(!(h0>=0&&h0<1)){flash('渐晕起始视场要在 0 到 1 之间（不含 1）',true);return;}
+  for(const [nm,v] of [['Y-UPPER',U],['Y-LOWER',L],['X',X]]) if(!(v>0&&v<=1)){flash(`全视场 ${nm} = ${v} 不对：系数是保留的光瞳比例，要在 0 到 1 之间`,true);return;}
+  if(!(p>=0.5&&p<=6)){flash('幂次 p 要在 0.5 到 6 之间',true);return;}
+  let hs;
+  if(S.vgAuto){
+    const n=8, e=Math.min(1,2/p); hs=[];   // spacing exponent <1 packs points toward the edge where the curve bends hardest
+    for(let i=0;i<n;i++){ const tt=h0>0?Math.pow(i/(n-1),e):Math.pow((i+1)/n,e); hs.push(h0+(1-h0)*tt); }
+  } else {
+    hs=S.vgPts.trim().split(/[\s,]+/).map(Number).filter(Number.isFinite).sort((a,b)=>a-b);
+    if(!hs.length){flash('视场点为空',true);return;}
+    if(hs.some(h=>h>1||h<0)){flash('视场点要在 0 到 1 之间',true);return;}
+  }
+  const f=(h,end)=>{const t=h<=h0?0:Math.min(1,(h-h0)/(1-h0)); return 1-(1-end)*Math.pow(t,p);};
+  const r3=x=>{let s=(+x).toFixed(3).replace(/0+$/,'').replace(/\.$/,'.0'); return s;};
+  const rows=[['0.0','1.0','1.0','1.0']], seen=new Set(['0.0']);
+  for(const h of hs){ if(h<=0) continue; const k=r3(h); if(seen.has(k)) continue; seen.add(k); rows.push([k,r3(f(h,U)),r3(f(h,L)),r3(f(h,X))]); }
+  if(rows.length>9){flash(`生成了 ${rows.length} 行，超过 VFIELD 的 9 行上限，请减少视场点`,true);return;}
+  S.vf=rows; S.vfOn=true; $('vf-on').checked=true; renderVF(); update(); flash(`已生成 ${rows.length} 行`);
+});
+
+/* ---------- hard CAO table (refinement macro) ---------- */
+function caoRole(s){
+  let a=parseInt(S.optAps,10); const v=parseInt(s,10);
+  if(!Number.isFinite(a)&&S.stopPos==='FIX') a=Math.abs(parseInt(S.stopFixN,10));
+  if(!Number.isFinite(v)) return '';
+  if(!Number.isFinite(a)) return '光阑浮动，无法判断';
+  if(v===a) return '光阑';
+  return v<a?'光阑前：主要切 Y-LOWER':'光阑后：主要切 Y-UPPER';
+}
+function renderCAO(){
+  const tb=$('cao-rows'); tb.innerHTML='';
+  S.cao.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input type="text" class="num" data-ci="${i}" data-cj="0" value="${esc(r[0])}" aria-label="第 ${i+1} 个面号"></td>
+      <td><input type="text" class="num" data-ci="${i}" data-cj="1" value="${esc(r[1])}" aria-label="第 ${i+1} 个口径"></td>
+      <td class="role">${esc(caoRole(r[0]))}</td><td><button type="button" class="ghost" data-cdel="${i}" aria-label="删除第 ${i+1} 行">删除</button></td>`;
+    tb.appendChild(tr);
+  });
+  if(!S.cao.length) tb.innerHTML='<tr><td colspan="4" class="mini">没有硬口径。点"加一个面"或载入示例。</td></tr>';
+}
+$('cao-rows').addEventListener('input',e=>{const t=e.target; if(t.dataset.ci===undefined)return; S.cao[+t.dataset.ci][+t.dataset.cj]=t.value;
+  if(t.dataset.cj==='0') t.closest('tr').children[2].textContent=caoRole(t.value); update();});
+$('cao-rows').addEventListener('click',e=>{const b=e.target.closest('button[data-cdel]'); if(!b)return; S.cao.splice(+b.dataset.cdel,1); renderCAO(); update();});
+$('cao-add').addEventListener('click',()=>{S.cao.push(['','']); renderCAO(); update();});
+$('cao-preset').addEventListener('click',()=>{S.cao=JSON.parse(JSON.stringify(CAO_PRESET_EXAMPLE)); S.optAps='7'; $('opt-aps').value='7'; S.optFvf=true; $('opt-fvf').checked=true; renderCAO(); update(); flash('已载入硬口径示例（面号随结构不同，要按实际结果改）');});
+$('opt-aps').addEventListener('input',()=>{fromForm(); renderCAO();});
+
+/* ---------- helpers ---------- */
+function num(v){if(v===''||v===null||v===undefined)return NaN;return Number(String(v).trim());}
+function fmt(x){let s=(+x).toFixed(4);s=s.replace(/0+$/,'').replace(/\.$/,'.0');return s;}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+function toks(s){return String(s||'').trim().split(/\s+/).filter(Boolean);}
+function lines(s){return String(s||'').split(/\r?\n/).map(x=>x.replace(/\s+$/,'')).filter(x=>x.trim()!=='');}
+
+/* ---------- generate ---------- */
+/* OBB from 半像高/焦距/F数 (same formulas as SYNOPSYS_OBB计算器.xlsx) or entered directly */
+function obb(){
+  const F=num(S.fnum);
+  if(S.epmode==='calc'){
+    const Y=num(S.yimg), f=num(S.efl);
+    const upp=(Y>0&&f>0)?Math.atan(Y/f)*180/Math.PI:NaN, y=(f>0&&F>0)?f/(2*F):NaN;
+    return {upp, y, efl:f, yimg:Y, F, uppS:Number.isFinite(upp)?upp.toFixed(4):'?', yS:Number.isFinite(y)?y.toFixed(4):'?'};
+  }
+  const upp=num(S.upp0), y=num(S.ymp1), f=(y>0&&F>0)?2*y*F:NaN, Y=(f>0&&upp>0)?f*Math.tan(upp*Math.PI/180):NaN;
+  return {upp, y, efl:f, yimg:Y, F, uppS:String(S.upp0).trim()||'?', yS:String(S.ymp1).trim()||'?'};
+}
+function ymp1(){ return obb().y; }
+/* model-glass limit lines (PANT directives) + their checks */
+function glmLines(err,warn,ok){
+  const L=[], s=v=>String(v??'').trim();
+  const cul=num(S.cul),ful=num(S.ful),cll=num(S.cll),fll=num(S.fll);
+  if(s(S.cul)!=='') L.push('CUL '+s(S.cul));
+  if(s(S.ful)!=='') L.push('FUL '+s(S.ful));
+  if(s(S.cll)!=='') L.push('CLL '+s(S.cll));
+  if(s(S.fll)!=='') L.push('FLL '+s(S.fll));
+  const cb=toks(S.cbounds), fb=toks(S.fbounds);
+  if(cb.length) L.push('CBOUNDS '+cb.join(' '));
+  if(fb.length) L.push('FBOUNDS '+fb.join(' '));
+  if(s(S.cul)!==''&&!(cul>=1&&cul<=100)) err('CUL 超出 1–100 会被程序改成 1.8。');
+  if(cul>2.09&&!cb.length&&!fb.length) err(`CUL ${S.cul} 超过默认冕牌线与火石线交点（nd≈2.09），该区间没有合法 vd。`);
+  else if(cul>2.0) warn('CUL > 2.0：模型玻璃会落在目录很稀疏的区域，色散为外推。');
+  if(Number.isFinite(cll)&&cll<1.501) err('CLL 不能低于 1.501（文档：低于后边界计算失效）。');
+  if(Number.isFinite(fll)&&fll<1.501) err('FLL 不能低于 1.501。');
+  const ftop=fb.length?num(fb[0]):1.92;
+  if(Number.isFinite(ful)&&ful>ftop+1e-9) err(`FUL ${S.ful} 高于火石边界顶点 nd=${ftop}，程序会报 "FLINT UPPER LIMIT CANNOT EXCEED TOP OF BOUNDARY LINE"。要提高 FUL，先用 FBOUNDS 抬高火石线。`);
+  for(const [nm,b] of [['CBOUNDS',cb],['FBOUNDS',fb]]) if(b.length){ if(b.length!==4||b.some(v=>!Number.isFinite(+v))) err(`${nm} 需要 4 个数：nd1 vd1 nd2 vd2。`); else if(+b[0]===+b[2]) err(`${nm} 两点 nd 相同，程序报 INDEX DIFFERENCE IS ZERO。`); else if(+b[0]<+b[2]) warn(`${nm} 应把高折射率的点写在前面。`); }
+  if(Number.isFinite(cul)&&cul>1.9) ok(`模型玻璃 nd 上限放开到 ${S.cul}（默认 1.9 卡在 Schott N-LASF31A 一带）。`);
+  if(!L.length) warn('启用了模型玻璃边界但一个值都没填。');
+  return L;
+}
+function generate(){
+  const out=[], C=[]; // C = checks
+  const add=s=>out.push(' '+String(s).replace(/\s+$/,'')), rem=s=>{ if(S.comments) out.push(' ! '+s); };
+  const err=t=>C.push(['err',t]), warn=t=>C.push(['warn',t]), info=t=>C.push(['info',t]), ok=t=>C.push(['ok',t]);
+  const n=nEl();
+
+  rem(`${(S.fname||'DSEARCH').toUpperCase()}.MAC  generated by DSEARCH builder ${new Date().toISOString().slice(0,10)}`);
+  // glass model limits: SPECIAL PANT (default) and/or a separate PANT before DSEARCH
+  const GL=S.glmOn?glmLines(err,warn,ok):[];
+  if(S.glmOn&&(S.glmWhere==='pre'||S.glmWhere==='both')){
+    rem('model-glass limits as a separate PANT before DSEARCH (global setting)');
+    add('PANT'); GL.forEach(l=>add(l)); add('END');
+    if(S.glmWhere==='pre'&&S.coreOn) warn('多核时子进程是否继承 DSEARCH 前单独 PANT 设的 CUL 没有验证过；SPECIAL PANT 会随配置传给子进程，更稳妥。');
+  }
+  if(S.glmOn&&S.glOn) warn('已用 GLASS 指定实际玻璃，模型玻璃边界不起作用。');
+
+  add((S.coreOn?'':'!')+'CORE '+(S.core||14));
+  const L=parseInt(S.llib,10);
+  if(!(L>=1&&L<=10)) err('镜库位置 LLIB 必须是 1–10。');
+  add(`DSEARCH ${Number.isFinite(L)?L:1}${S.quiet?'  QUIET':''}`);
+
+  // SYSTEM
+  add('SYSTEM');
+  add('ID '+(S.sid||'DSEARCH').slice(0,60));
+  const O=obb();
+  if(S.epmode==='calc'&&!(O.yimg>0&&O.efl>0)) err('半像高 Y′ 和焦距 EFL 都要填正数。');
+  if(!(O.y>0)) err('半入瞳 YMP1 无效：检查焦距和 F 数（或直接填的 YMP1）。');
+  if(!(O.upp>0&&O.upp<90)) err('半视场角 UPP0 应在 0–90° 之间。');
+  if(O.yimg>0&&O.efl>0&&O.yimg/O.efl>0.84) warn(`像高/焦距 = ${(O.yimg/O.efl).toFixed(3)} > 0.84（半视场 > 40°），边缘光线难追迹；全视场 > 180° 必须改用 OBD。`);
+  add(`OBB 0 ${O.uppS} ${O.yS}`);
+  const w=toks(S.wavl);
+  if(!w.length) err('WAVL 至少需要一个波长。');
+  if(w.some(v=>!(+v>0.2&&+v<20))) warn('WAVL 单位是 µm，检查是否误填了 nm。');
+  if(w.length<3) warn('少于 3 个波长时 GLM 模型玻璃不能作为变量（程序提示 CANNOT VARY GLASS MODELS WITH LESS THAN 3 WAVELENGTHS）。');
+  if(w.length>5){ add('WA1 '+w.slice(0,5).join(' ')); add('WA2 '+w.slice(5,10).join(' ')); if(w.length>10) err('最多 10 个波长。'); }
+  else add('WAVL '+w.join(' '));
+  const wt=toks(S.wt);
+  if(wt.length){
+    if(wt.length!==w.length) err(`波长权重有 ${wt.length} 个，波长有 ${w.length} 个，必须一样多。`);
+    if(wt.some(v=>!(+v>=0))) err('波长权重必须是非负数。');
+    if(wt.every(v=>+v===0)) err('波长权重全为 0（程序报 Sum of wavelength weights is zero）。');
+    add('WT1 '+wt.slice(0,5).join(' ')); if(wt.length>5) add('WT2 '+wt.slice(5,10).join(' '));
+    if(new Set(wt.map(Number)).size>1) info(`波长权重 ${wt.join(' ')} 会乘进 DSEARCH 自动生成的每组单色光线集（GSR/GNR … icol），直接改变搜索时各颜色的比重。`);
+  }
+  if(S.vfOn){
+    const rows=S.vf.filter(r=>r.some(v=>String(v).trim()!==''));
+    if(!rows.length) err('已启用 VFIELD 但表格为空。');
+    if(rows.length>9) err('VFIELD 最多 9 个视场点。');
+    add('VFIELD '+rows.length);
+    let prev=-1, anyAsym=false;
+    rows.forEach((r,i)=>{
+      const [h,a,b,x]=r.map(num);
+      add(`${pad(r[0])} ${pad(r[1])} ${pad(r[2])} ${pad(r[3])}`);
+      if(![h,a,b,x].every(Number.isFinite)) err(`VFIELD 第 ${i+1} 行有空值或非数字（每行必须 4 个数）。`);
+      if(h<prev) err(`VFIELD 视场必须从小到大（第 ${i+1} 行）。`);
+      if(h<0||h>1) warn(`VFIELD 第 ${i+1} 行视场 ${r[0]} 不在 0–1。`);
+      prev=h;
+      if(a>1||b>1||x>1) err(`VFIELD 第 ${i+1} 行有系数大于 1（${[a,b,x].filter(v=>v>1).join('、')}）：系数是保留的光瞳比例，大于 1 会把光瞳放大。改成 0–1。`);
+      if(a<=0||b<=0) err(`VFIELD 第 ${i+1} 行 Y 系数必须大于 0。`);
+      if(x===0) err(`VFIELD 第 ${i+1} 行 X 为 0，程序报 X-DIMENSION CANNOT BE ZERO。`);
+      if(a+b<0.6&&h>0) warn(`视场 ${r[0]} 只保留了 ${fmt((a+b)/2*100)}% 的光束高度，该视场评价光线太少，易出怪结构。`);
+      if(Math.abs(a-b)>1e-9) anyAsym=true;
+    });
+    const last=rows.length?num(rows[rows.length-1][0]):NaN;
+    if(last<1) warn(`VFIELD 最后一个视场是 ${rows[rows.length-1][0]}，更大的视场沿用这一行的值。`);
+    if(anyAsym) info('上下不对称时主光线会被移到渐晕光束中心，畸变、像高、横向色差的参考点随之偏移（实测一例约 3 µm）。');
+    if(S.qmode==='QUICK'||S.qmode==='Q0') warn(`带 VFIELD 时 ${S.qmode} 的初筛几乎只看近轴三/五阶像差，不感知渐晕；实测 Q6 最好（0.090 vs QUICK 0.097 vs 不用 0.123）。`);
+    if(S.qmode==='Q6') ok('VFIELD + Q6：初筛带 0.75/1.0 视场上下缘真实光线，能保住依赖渐晕的结构。');
+    info('VFIELD 不会让镜片变小，DSEARCH 还会清掉全部 CAO；要缩口径，搜索后用硬 CAO 精修。');
+  }
+  for(const l of lines(S.sysextra)){ add(l.trim()); if(/^WAP\s+[23]\b/i.test(l.trim())) warn('WAP 2/3 在 DSEARCH 中会因没有光阑 CAO/CSTOP 被降为 WAP 1，且与 STOP FREE 冲突。'); }
+  add('UNITS '+S.units);
+  add('END');
+
+  // GOALS
+  add('GOALS');
+  const np=S.npos===''?NaN:parseInt(S.npos,10);
+  add('ELEMENTS '+n+(Number.isFinite(np)?' '+np:''));
+  if(!(parseInt(S.nel,10)>=1&&parseInt(S.nel,10)<=21)) err('ELEMENTS 必须 1–21。');
+  if(Number.isFinite(np)&&!(np>=1&&np<=n)) err('正元件数必须在 1 到元件数之间。');
+  if(S.signmode==='single'){
+    if(S.signs.some(s=>s!=='P'&&s!=='N')) err('SINGLE 要求每个元件都指定 P 或 N。');
+    add('SINGLE '+S.signs.map(s=>s||'?').join(' '));
+    const caseNo=S.signs.reduce((a,s,i)=>a+(s==='P'?1<<(n-1-i):0),0);
+    info(`SINGLE 对应二分搜索的 case ${caseNo}（只跑这一种正负组合）。不支持 SINGLE CASE k 写法。`);
+  } else if(S.signmode==='filter'){
+    if(S.signs.every(s=>!s)) warn('FILTER 没有锁定任何元件，等于不约束。');
+    add('FILTER '+S.signs.map(s=>s||'0').join(' '));
+  }
+  if(Number.isFinite(np)&&S.signmode==='single'){ const p=S.signs.filter(s=>s==='P').length; if(p!==np) err(`SINGLE 里有 ${p} 片 P，与正元件数 ${np} 冲突，这个 case 会被跳过。`); }
+  const rs=toks(S.rstart), nR=Math.max(1,Math.min(4,rs.length));
+  if(S.randOn){
+    if(S.signmode==='single') err('SINGLE 与 RANDOM 不能同时用（手册）。');
+    const rn=parseInt(S.randN,10);
+    info(`随机搜索：共 ${Number.isFinite(rn)&&rn>0?rn:200} 例${Number.isFinite(np)?`，只保留正元件数 = ${np} 的`:''}（RANDOM 0 或不填 = 200）。`);
+  } else if(S.signmode!=='single'){
+    const cnt=1<<n, keep=Number.isFinite(np)?comb(n,np):cnt;
+    info(`二分搜索共 2^${n} = ${cnt} 个正负组合${Number.isFinite(np)?`，只保留正元件数 = ${np} 的 C(${n},${np}) = ${keep} 个`:''}${nR>1?`；${nR} 个起始半径，各试一遍，共 ${keep*nR} 例`:''}。`);
+  }
+
+  // ASPH
+  const surf=[...S.aspSurf].sort((a,b)=>a-b), nterm=parseInt(S.asphN,10);
+  if(surf.length||S.asphQ||S.asphR){
+    if(S.asphQ) add('ASPH Q');
+    if(S.asphR) add('ASPH R');
+    if(surf.length) add(`ASPH ${nterm} ${surf.join(' ')}`);
+    else add(`ASPH ${nterm}`);
+    if(!surf.length) warn('没有选面号：ASPH n 不带面号时所有面都成为非球面。');
+    if(!S.asphR) warn('没勾 ASPH R：真实光线阶段只变 CC，不加任何高次项（实测）。');
+    if(!S.asphQ) info('没勾 ASPH Q：快速筛选阶段不变 CC。');
+    const terms=['CC','G3 (r⁴)','G6 (r⁶)','G10 (r⁸)','G16 (r¹⁰)'].slice(0,nterm).join(' + ');
+    ok(`非球面面 ${surf.length?surf.join(', '):'全部'}：${S.asphR?terms:'CC'}。`);
+  }
+
+  // system-type options (AFOCAL must precede FNUM)
+  if(S.afocal){ add('AFOCAL'); info('AFOCAL：FNUM 改为倒数第二面的近轴 YA 目标；BACK 是最后两个虚面之前的距离（目镜出瞳距）。'); }
+  if(S.runmode==='SAMPLE'){ add('SAMPLE'); info('SAMPLE：只生成一例起点和优化宏，不做任何优化，用来检查起始半径、厚度和系统数据。'); }
+  if(S.immOn){ const a=num(S.immN), b=num(S.immV);
+    if(!(a>1&&b>0)) err('IMMERSE 需要像方介质的 nd（>1）和 vd。'); add(`IMMERSE ${String(S.immN).trim()} ${String(S.immV).trim()}`);
+    info('IMMERSE：像前介质作为 GLM 模型玻璃。手册建议同时加后焦和末面曲率目标。'); }
+  if(S.covOn){ const t=num(S.covT), a=num(S.covN), b=num(S.covV);
+    if(!(t>0&&a>1&&b>0)) err('COVER 需要盖玻片厚度、nd、vd 三个数。');
+    if(S.afocal) err('无焦系统不能加盖玻片（手册）。');
+    add(`COVER ${String(S.covT).trim()} ${String(S.covN).trim()} ${String(S.covV).trim()}`);
+    info(`COVER：第 ${n} 片变成平板盖玻片，ELEMENTS 要把它算进去（${n-1} 片镜片 + 盖玻片）。COVER 时二分搜索跳过偶数 case。`); }
+
+  // targets
+  const fnum=num(S.fnum);
+  if(!(Math.abs(fnum)>0&&Math.abs(fnum)<100)) err('FNUM 必须非零且 |FNUM| < 100（DSEARCH 必需）。');
+  const fw=String(S.fnumW).trim()!==''?String(S.fnumW).trim():(S.twFw100?'100':'');
+  add('FNUM '+String(S.fnum).trim()+(fw?' '+fw:''));
+  if(S.back!==''){ const b=num(S.back); if(!(b>=-1000&&b<=1000)) err('BACK 必须在 −1000 到 1000。'); add('BACK '+S.back.trim()+(S.backSet?' SET':(S.backW!==''?' '+S.backW.trim():''))); }
+  if(S.totl!==''){ add('TOTL '+S.totl.trim()+(S.totlW!==''?' '+S.totlW.trim():'')); }
+  if(S.stopPos==='TELE'){
+    add('STOP TELE');
+    err('STOP TELE 需要 OBA 物方（V16 报 "STOP TELECENTRIC REQUIRES OBJECT TYPE OBA"），本工具生成的是 OBB，这样写会中止。');
+    if(S.stopFree||S.stopReal) info('STOP TELE 之后不能再写其他 STOP 行（"DOES NOT HONOR OTHER STOP DECLARATIONS"），已省略 STOP FREE / REAL。');
+  } else {
+    if(S.stopPos==='FIX'){ const sn=parseInt(S.stopFixN,10);
+      add('STOP FIX'+(S.stopFixN!==''?' '+S.stopFixN:''));
+      if(S.stopFree) warn('STOP FIX 与 STOP FREE 同时写，后写的 FREE 生效，光阑不会固定。');
+      if(Number.isFinite(sn)&&sn!==0){ const a=Math.abs(sn);
+        if(a>2*n) err(`STOP FIX ${sn}：只有 ${2*n} 个面（${n} 片 × 2），光阑面号超出范围。`);
+        info(`STOP FIX ${sn}：光阑放在镜片面 ${a} 上（不另加面），不变 YP1；结果里是 APS −${a}，即实光阑，用光线瞄准找主光线。V16 会把面号按 −|SN| 写进 APS，所以正负号都一样，和手册"负数才是实光阑"的说法不同。实光阑追迹更慢，大视场时可能有较多 case 失败。`); }
+      else info('STOP FIX 不带面号：光阑固定在上面 FIRST / MIDDLE / LAST 的起始位置，是近轴光阑；要实光阑再加 STOP REAL。'); }
+    else add('STOP '+S.stopPos);
+    if(S.stopFree) add('STOP FREE');
+    if(S.stopReal) add('STOP REAL');
+  }
+  if(S.rt!=='') add('RT '+S.rt.trim());
+
+  // starting structure
+  if(rs.length){
+    if(rs.length>4) err(`RSTART 给了 ${rs.length} 个值，最多 4 个（程序报 ONLY FOUR TRIAL RADII PERMITTED 并截断）。`);
+    if(rs.some(v=>!Number.isFinite(+v)||+v===0)) err('RSTART 的值必须是非零数字。');
+    add('RSTART '+rs.slice(0,4).join(' '));
+    if(S.pdist) warn('PDIST 会覆盖 RSTART，RSTART 不生效（手册）。');
+    if(S.randOn&&rs.length>1) info('RANDOM 时 RSTART 只用第一个值，作为最短半径。');
+    const O2=obb(); if(O2.efl>0){ const r0=Math.abs(+rs[0]); if(r0<1.5*O2.efl) warn(`RSTART ${rs[0]} 不到焦距的 1.5 倍，起始曲率偏陡，容易追迹失败（手册建议约 6 倍焦距 ≈ ${(6*O2.efl).toFixed(0)}）。`); }
+  }
+  if(String(S.thstart).trim()!==''){ const v=num(S.thstart); if(!(v>0)) err('THSTART 必须是正数。'); add('THSTART '+String(S.thstart).trim()); }
+  if(String(S.astart).trim()!==''){ const v=num(S.astart); if(!(v>0)) err('ASTART 必须是正数。'); add('ASTART '+String(S.astart).trim()); }
+  if(String(S.nstN).trim()!==''||String(S.nstV).trim()!==''){ const a=num(S.nstN), b=num(S.nstV);
+    if(!(a>1&&b>0)) err('NSTART 要同时给起始模型玻璃的 nd 和 vd（都不能为 0）。');
+    add(`NSTART ${String(S.nstN).trim()} ${String(S.nstV).trim()}`);
+    const cu=S.glmOn&&String(S.cul).trim()!==''?num(S.cul):1.9; if(a>cu) warn(`NSTART nd ${a} 高于 CUL ${cu}，优化时会被夹到上限。`); }
+  if(S.pdist) add('PDIST');
+  if(S.randOn){ const rn=String(S.randN).trim(); add('RANDOM'+(rn!==''?' '+rn:'')); }
+  if(S.csd){ add('CSD'); info('CSD：生成的 PANT 用 VLIST CSUM ALL + VLIST CDIFF ALL 代替 VLIST RD ALL，即变光焦度和弯曲。'); }
+  if(S.plaOn){ const ps=toks(S.pla);
+    if(ps.some(v=>!(+v>=1&&+v<=100))) err('PLASTIC 面号必须在 1–100。');
+    add('PLASTIC'+(ps.length?' '+ps.join(' '):''));
+    info(ps.length?`PLASTIC：面 ${ps.join(', ')} 的模型玻璃限制在塑料区。`:'PLASTIC 不带面号：所有面都按塑料处理。'); }
+  const fov=toks(S.fov), fwt=toks(S.fwt);
+  if(fov.length){ if(fov.length>6) err('FOV 最多 6 个视场（ONLY SIX FIELDS MAY BE ENTERED IN DSEARCH）。'); if(fov.some(v=>+v>1)) err('FOV 是相对视场，不能大于 1（YOU ENTERED A VALUE FOR HBAR GREATER THAN 1）。');
+    if(fov.slice(1).some(v=>+v===0)) err('只有第一个 FOV 可以是 0，后面出现 0 会截断视场表。');
+    add('FOV '+fov.join(' ')); }
+  if(fwt.length){ if(fwt.length!==fov.length) warn(`FWT 有 ${fwt.length} 个、FOV 有 ${fov.length} 个，数量不一致。`); add('FWT '+fwt.join(' ')); }
+  if(S.npass!=='') add('NPASS '+S.npass);
+  if(String(S.damp).trim()!==''){ add('DAMP '+String(S.damp).trim()); info('DAMP 只写进最后的 DSEARCH_OPT.MAC（手册）。'); }
+  if(S.psd){ add('PSD '+S.psd); info(S.psd==='II'?'PSD II：开关 8 开、2 关。':'PSD III：开关 8 和 2 都开。'); }
+  if(String(S.ngrid).trim()!==''){ const g=parseInt(S.ngrid,10); if(!(g>=1&&g<=50)) err('NGRID 必须 1–50（默认 4 = 半孔径 4 条光线）。'); add('NGRID '+S.ngrid); }
+  if(S.opdmode){ const w=String(S.wopd).trim(); add(S.opdmode+(w!==''?' '+w:''));
+    if(/SHEAR/.test(S.opdmode)&&String(S.shear).trim()!==''){ add('SHEAR '+String(S.shear).trim()); }
+    if(S.opdmode==='OPSHEAR') info('OPSHEAR 在远离最优时 OPD 很大、表现较差，手册建议先用 TOSHEAR。'); }
+  else if(String(S.shear).trim()!=='') info('SHEAR 只在 OPSHEAR / TOSHEAR 时有用，已省略。');
+  if(S.dsens!=='0'){ const w=String(S.dsensW).trim(); add('DSENS '+S.dsens+(w!==''?' '+w:''));
+    info(`DSENS ${S.dsens}：评价函数加 M 0 ${w||'w'} A ${['','SAT','ESA','SDU','RUD','DAA'][+S.dsens]}。`); }
+  if(S.annOn){
+    const an=String(S.annN).trim();
+    add(`ANNEAL ${S.annT} ${S.annC}${S.annQ?' Q':(an!==''?' 0':'')}${an!==''?' '+an:''}`);
+    if(!S.annQ&&an!=='') info('ANNEAL 不带 Q 时第 4 个位置写 0 占位，否则趟数会被当成第 4 个字读掉（V16 读的是第 5 个字）。');
+    if(num(S.annC)===0) info('冷却写 0 时程序取温度的 0.2 倍。');
+  }
+  add('COLORS '+S.colors);
+  if(S.snap!=='') add('SNAPSHOT '+S.snap);
+  if(S.qmode!=='NONE'){
+    add(`${S.qmode} ${S.nq} ${S.nr}`);
+    if(S.nr==='') warn('没有给真实光线趟数 nr。');
+  } else { info('不写 QUICK：从平板起直接用真实光线，慢约 2.5 倍，实测结果反而最差。'); }
+  if(S.keep!==''){ const k=parseInt(S.keep,10); if(!(k>=1&&k<=10)) err('KEEP 必须 1–10。'); add('KEEP '+S.keep); }
+  if(S.revert){ add('REVERT'); if(S.qmode==='NONE') warn('REVERT 只在 QUICK 下起作用。'); if(S.coreOn) warn('REVERT 会关掉多核，只用一个核跑（手册）。'); }
+  if(S.track) add('TRACK');
+  if(S.stats) add('STATISTICS');
+  if(S.noload) add('NOLOAD');
+  if(String(S.delay).trim()!==''){ const d=String(S.delay).trim().toUpperCase();
+    if(d!=='OFF'&&!(+d>0)) err('DELAY 写秒数或 OFF。'); add('DELAY '+d); if(!S.coreOn) info('DELAY 只在多核时有用。'); }
+  if(S.glOn){
+    const okc=c=>'SOHFUCGRMN'.includes(c);
+    if(!String(S.glp).trim()||!String(S.gln).trim()) err('GLASS 正、负元件的玻璃都要填（手册：用一个就必须两个都给）。');
+    if(!okc(S.glpCat)||!okc(S.glnCat)) err('GLASS 目录字母必须是 S/O/H/F/U/C/G/R/M/N。');
+    add('GLASS POS'); add(`${S.glpCat} ${String(S.glp).trim().toUpperCase()}`);
+    add('GLASS NEG'); add(`${S.glnCat} ${String(S.gln).trim().toUpperCase()}`);
+    info('GLASS：按起始光焦度给正/负元件分配这两种玻璃，搜索中不变玻璃；优化后正负可能互换。');
+  }
+  for(const l of lines(S.goalextra)){ add(l.trim()); if(/^(ZER|FOR)/i.test(l.trim())) info(`${l.trim().split(/\s+/)[0].toUpperCase()} 面型会大量增加变量，搜索会慢很多。`); }
+  add('END');
+
+  // SPECIAL
+  const sp=[...((S.glmOn&&S.glmWhere!=='pre')?GL:[]), ...lines(S.spant)], sa=lines(S.saant);
+  if(S.glmOn&&S.glmWhere!=='pre'&&GL.length) ok('模型玻璃边界写在 SPECIAL PANT 开头：每个生成的 PANT 都先执行它再 VLIST GLM，DSEARCH_OPT.MAC 里也带着。');
+  const pre=[];
+  if(S.twGiht){ if(O.yimg>0){ pre.push(`M ${O.yimg.toFixed(4)} 2 A GIHT`); info('OBB 的 YMP1 和 FNUM 已经锁定焦距，近轴像高 f·tanω 自然等于 Y′，GIHT 目标一般自动满足。'); } else err('钉住像高需要半像高 Y′。'); }
+  if(S.twDist){ const dl=distLines(), v=num(S.distVal)||0;
+    if(!dl.length) err(S.distMode==='M'?'畸变目标要填一个百分数（0 = 无畸变）。':'畸变上限要填大于 0 的百分数。');
+    else { pre.push(...dl); const nf=dl.length/4;
+      info(S.distMode==='M'?`畸变目标 ${v}%：${nf} 个视场，每个 4 行；残差按百分点计，差 1 个百分点 × 权重。`
+        :`畸变 |D| ≤ ${Math.abs(v)}%：${nf} 个视场，每个 4 行；超出 1 个百分点时罚值等于权重。`);
+      if(S.distMode==='M'&&v!==0&&nf>1) warn('各视场用同一个非零畸变目标不合理（畸变一般随视场变化）。非零目标建议只控全视场，或改用"上限"。');
+      if(Math.abs(v)<0.5&&O.efl>0&&O.yimg/O.efl>0.58) info('广角镜头把畸变压到 0.5% 以内代价很大，后组会变复杂；先用较宽的上限搜索，精修时再收紧。'); } }
+  if(S.craOn){ const cl=craLines();
+    if(!cl.length) err('CRA 上限要在 0–89° 之间。');
+    else { pre.push(...cl);
+      info(`CRA ≤ ${S.craMax}°：${cl.length} 条限制，按像面主光线角正切 |HH| ≤ ${Math.tan(num(S.craMax)*Math.PI/180).toFixed(4)}。SPECIAL AANT 在 QUICK 初筛阶段也会生效。`);
+      if(num(S.craMax)<10) info('CRA 上限很小，接近像方远心，后组会变大。远心可以直接用 M 0 1 A P HH 1。'); } }
+  if(S.thkDs){ pre.unshift(...thkLines(err,warn,info,false));
+    info('厚度控制写进了 SPECIAL AANT：它排在 DSEARCH 自动生成的 AEC/ACC 之后，会覆盖它们（手册说可以这样改默认参数）。搜索阶段用 AFE 还没实测过。'); }
+  else if(S.vfOn) warn('带 VFIELD 时边厚基本没被控制住。DSEARCH 自动加的 AEC 只看全视场的上、下边缘光线，而且光瞳已经按 VFIELD 缩小（手册 §10.3.7）。前组口径往往由小视场决定，PAD 又按不渐晕的软口径画镜片。实测一轮 10 个结果：AEC 位置边厚 0.7–1.0 mm，按渐晕后各视场光束算是 −0.07–0.7 mm，按 PAD 画的口径是 −0.7 到 −5.4 mm。可以勾选精修宏里的"也写进 DSEARCH 的 SPECIAL AANT"，用 AFE 在口径处控制（偏保守，搜索阶段还没实测）；搜索完用 仓库里附带的 rle_edge_check.py 检查。');
+  { const dup=pre.filter(l=>/\bA\s+P\s+/i.test(l)&&sa.some(x=>x.trim().toUpperCase()===l.toUpperCase()));
+    if(dup.length) warn(`SPECIAL AANT 文本框里有 ${dup.length} 行和上面勾选项生成的完全一样，会重复计入评价函数（例如 ${dup[0]}），删掉文本框里的。`);
+    const seen=new Set(), twice=sa.map(l=>l.trim().toUpperCase()).filter(l=>/^(M|L[A-Z]*)\s.*\bA\s+P\s+/.test(l)&&(seen.has(l)||!seen.add(l)));
+    if(twice.length) warn(`SPECIAL AANT 文本框里同一个目标写了不止一次（${twice[0]}），会被重复计入评价函数。`);
+    if(S.twDist&&sa.some((l,i)=>/\bA\s+P\s+YA\b/i.test(l)&&/^\s*S\s+GIHT\s*$/i.test(sa[i+1]||'')))
+      warn('SPECIAL AANT 文本框里还有一组旧写法的畸变目标 "… A P YA … / S GIHT"（单位是 mm），和"控制畸变"重复了，删掉其中一个。'); }
+  sa.unshift(...pre);
+  add('SPECIAL PANT'); sp.forEach(l=>add(l.trim())); add('END');
+  add('SPECIAL AANT'); sa.forEach(l=>add(l.trim())); add('END');
+  if(sp.length>40) err(`SPECIAL PANT 有 ${sp.length} 行，上限 40。`);
+  if(sa.length>100) err(`SPECIAL AANT 有 ${sa.length} 行，上限 100。`);
+  [...sp,...sa].forEach(l=>{ if(l.trim().length>89) warn(`SPECIAL 行超过 90 列会被截断：${l.trim().slice(0,30)}…`); });
+  if(sa.some(l=>/^\s*VSET\b/i.test(l))&&!sa.some(l=>/^\s*G[A-Z]{2}\b/i.test(l))) warn('SPECIAL AANT 里的 VSET 后面没有光线集，实测完全无效。要渐晕请用 VFIELD。');
+  add(S.runmode==='EVAL'?'EVAL':'GO');
+  if(S.runmode==='EVAL') info('EVAL：只跑一例正负交替的镜头，用来快速发现输入错误；没问题再换成 GO。');
+  if(S.dplot) add('DSEARCH PLOT');
+  if(S.glmOn&&S.glmRestore){ rem('restore program-default model-glass limits'); add('PANT'); glmRestoreLines().forEach(l=>add(l)); add('END'); }
+
+  // misc
+  if(S.stopFree&&S.vfOn) info('VFIELD 时 WAP 为负，STOP FREE 可用（YP1 变量照常生成）。');
+  const bad=out.map((l,i)=>[l,i+1]).filter(([l])=>/[^\x20-\x7e]/.test(l));
+  if(bad.length) err(`第 ${bad.map(b=>b[1]).slice(0,6).join('、')} 行含非 ASCII 字符（中文或全角符号），SYNOPSYS 可能读错，请改成英文。`);
+  if(!C.some(c=>c[0]==='err')) ok('没有发现会让 DSEARCH 中止的错误。');
+  return {text:out.join('\n')+'\n', checks:C};
+}
+/* edge / center thickness monitors (AANT) */
+function thkLines(err,warn,info,hardCao){
+  const L=[], s=v=>String(v??'').trim();
+  const arg=(t,w)=>t!==''?' '+t+(w!==''?' '+w:''):(w!==''?' 0 '+w:''); // target 0 = program default
+  const g=s(S.thkG), gw=s(S.thkGW), a=s(S.thkA), aw=s(S.thkAW), cx=s(S.thkCmax), cxw=s(S.thkCmaxW), cn=s(S.thkCmin), cnw=s(S.thkCminW);
+  for(const [nm,v] of [['玻璃最小边厚',g],['玻璃边厚权重',gw],['空气最小边厚',a],['空气边厚权重',aw],['最大中心厚',cx],['ACC 权重',cxw],['最小中心厚',cn],['ACM 权重',cnw]])
+    if(v!==''&&!(+v>0)) err(`${nm}要填正数（目标和权重一律写正数）。`);
+  if(S.thkMode==='AEC') L.push('AEC'+arg(g,gw));
+  else { L.push(S.thkMode+arg(g,gw)); L.push('AAE'+arg(a,aw)); }
+  L.push('ACC'+arg(cx,cxw));
+  if(cn!==''||cnw!=='') L.push('ACM'+arg(cn,cnw));
+  if(cx!==''&&cn!==''&&+cx<=+cn) err('最大中心厚 ACC 必须大于最小中心厚 ACM。');
+  if(cx==='') info('ACC 不填 = 最大中心厚 1 英寸（25.4 mm），对小镜头基本不起作用，建议填实际上限。');
+  if(S.thkMode==='AFE') info('AFE 在口径（CAO + MARGIN）处量玻璃边厚：有硬口径的面按硬口径，其余按软口径。开关 39 关时程序会提示 "AFE IGNORES EFILE EDGES"，属正常。');
+  else if(S.vfOn||hardCao) warn(`${S.thkMode} 在边缘光线处量边厚，并按渐晕缩小光瞳，量的位置在镜片实际外缘之内，外圈边厚不受控制。建议改用 AFE。`);
+  return L;
+}
+/* chief-ray-angle limit at the image: |HH| <= tan(CRA), one line per field (LUA = upper limit of |value|) */
+function craLines(){
+  if(!S.craOn) return [];
+  const a=num(S.craMax); if(!(a>0&&a<89)) return [];
+  const t=Math.tan(a*Math.PI/180), win=Math.tan((a+2)*Math.PI/180)-t, w=String(S.craW??'').trim()||'1';
+  const fov=toks(S.fov).map(Number).filter(h=>h>0&&h<=1);
+  const fs=S.craAll?(fov.length?fov:[0.75,1]):[1];
+  return fs.map(h=>`LUA ${t.toFixed(4)} ${w} ${win.toFixed(4)} A P HH ${fmt(h)} 0 0 0`);
+}
+/* distortion in percent at HBAR h: 100*YA/(h*GIHT) - 100. A/S/MUL/DIV combine strictly top to bottom with the
+   previous components (manual 10.3), so this 4-line composite is exactly the percentage. OBB HBAR is a linear height fraction. */
+function distLines(){
+  if(!S.twDist) return [];
+  const raw=String(S.distVal??'').trim(), d=raw===''?0:num(raw);
+  if(!isFinite(d)) return [];
+  const lua=S.distMode!=='M';
+  if(lua&&!(Math.abs(d)>0)) return [];
+  const w=String(S.distW??'').trim()||'1', g=x=>String(+(+x).toFixed(6));
+  const fov=toks(S.fov).map(Number).filter(h=>h>0&&h<=1);
+  const fs=S.distAll?(fov.length?fov:[0.7,1]):[1];
+  const head=lua?`LUA ${g(Math.abs(d))} ${w} 1`:`M ${g(d)} ${w}`;
+  return fs.flatMap(h=>[`${head} A P YA ${fmt(h)}`,'DIV GIHT',`MUL CONST ${g(100/h)}`,'S CONST 100']);
+}
+/* pull the generator's own distortion / CRA / GIHT lines out of an imported SPECIAL AANT and back into the controls */
+function absorbSaant(sa,T){
+  const out=[], dist=[], cra=[]; let giht=false;
+  for(let i=0;i<sa.length;i++){
+    const l=sa[i].trim(), nx=k=>(sa[i+k]||'').trim();
+    let m=l.match(/^(M|LUA)\s+(\S+)\s+(\S+)(?:\s+(\S+))?\s+A\s+P\s+YA\s+(\S+)$/i);
+    if(m&&/^DIV\s+GIHT$/i.test(nx(1))&&/^MUL\s+CONST\s+\S+$/i.test(nx(2))&&/^S\s+CONST\s+100(\.0*)?$/i.test(nx(3))
+       &&(m[1].toUpperCase()==='LUA')===(m[4]!==undefined)){
+      dist.push({mode:m[1].toUpperCase(),t:m[2],w:m[3],h:+m[5],src:sa.slice(i,i+4)}); i+=3; continue; }
+    if(/^M\s+\S+\s+2\s+A\s+GIHT$/i.test(l)){ giht=true; continue; }
+    m=l.match(/^LUA\s+(\S+)\s+(\S+)\s+(\S+)\s+A\s+P\s+HH\s+(\S+)\s+0\s+0\s+0$/i);
+    if(m){ cra.push({t:+m[1],w:m[2],h:+m[4],src:[sa[i]]}); continue; }
+    out.push(sa[i]);
+  }
+  const same=(a,k)=>a.every(x=>x[k]===a[0][k]);
+  if(dist.length&&same(dist,'mode')&&same(dist,'t')&&same(dist,'w')){
+    const d=dist[0]; T.twDist=true; T.distMode=d.mode; T.distVal=d.t; T.distW=d.w==='1'?'':d.w; T.distAll=dist.length>1||d.h!==1;
+  } else dist.forEach(x=>out.push(...x.src));
+  if(cra.length&&same(cra,'t')&&same(cra,'w')&&cra[0].t>0){
+    const c=cra[0]; T.craOn=true; T.craMax=String(+(Math.atan(c.t)*180/Math.PI).toFixed(2)); T.craW=c.w==='1'?'':c.w; T.craAll=cra.length>1||c.h!==1;
+  } else cra.forEach(x=>out.push(...x.src));
+  if(giht) T.twGiht=true;
+  return out;
+}
+function glmRestoreLines(){ // program defaults; CUL/FUL first so a lowered FBOUNDS top is never below FUL
+  const L=['CUL 1.9','FUL 1.92'];
+  if(String(S.cll).trim()!=='') L.push('CLL 1.501');
+  if(String(S.fll).trim()!=='') L.push('FLL 1.501');
+  if(toks(S.cbounds).length) L.push('CBOUNDS 1.88 40.43 1.49 78.53');
+  if(toks(S.fbounds).length) L.push('FBOUNDS 1.92 22.16 1.50 62.67');
+  return L;
+}
+
+/* ---------- refinement macro (after DSEARCH): load, hard CAO, FVF, PANT/AANT, SYNOPSYS, ARGLASS ---------- */
+function generateOpt(){
+  const out=[], C=[];
+  const add=s=>out.push(' '+String(s).replace(/\s+$/,'')), rem=s=>{ if(S.comments) out.push(' ! '+s); };
+  const err=t=>C.push(['err',t]), warn=t=>C.push(['warn',t]), info=t=>C.push(['info',t]), ok=t=>C.push(['ok',t]);
+  const nop=()=>{}, n=nEl(), nsurf=2*n, s=v=>String(v??'').trim();
+  const fname=(S.optFname||'OPT').toUpperCase();
+  rem(`${fname}.MAC  refine a DSEARCH result  generated by DSEARCH builder ${new Date().toISOString().slice(0,10)}`);
+
+  // 1. starting lens
+  if(S.optSrc==='lib'){ const L=s(S.optLib)!==''?parseInt(S.optLib,10):parseInt(S.llib,10);
+    if(!(L>=1&&L<=10)) err('镜库位置必须是 1–10。');
+    add('GET '+(Number.isFinite(L)?L:1));
+    info(`GET ${L}：取 DSEARCH 存进镜库位置 ${L} 的最好结果；其余 9 个在 DSEARCH01–10.RLE（不按名次排列），可改用 FETCH。`); }
+  else if(S.optSrc==='file'){ const f=(s(S.optFile)||'DSEARCH01').toUpperCase();
+    if(/\s/.test(f)) err('文件名不能有空格。'); add('FETCH '+f); }
+  else info('不取镜头：直接对当前镜头运行。');
+
+  // 2. hard apertures and real stop
+  const caos=S.cao.filter(r=>s(r[0])!==''||s(r[1])!=='');
+  const fixN=S.stopPos==='FIX'?Math.abs(parseInt(S.stopFixN,10)):NaN, dsFix=Number.isFinite(fixN)&&fixN>0;
+  const apsIn=s(S.optAps)===''?NaN:parseInt(S.optAps,10);
+  const aps=Number.isFinite(apsIn)?apsIn:(dsFix?fixN:NaN), realStop=Number.isFinite(aps);
+  if(!Number.isFinite(apsIn)&&dsFix) info(`DSEARCH 用了 STOP FIX ${S.stopFixN}：结果里已经是 APS −${fixN}（实光阑），精修宏不用再写 APS，可以直接 FVF。`);
+  if(realStop&&!(aps>=1&&aps<=nsurf)) warn(`实光阑面 ${aps} 不在 1–${nsurf}（${n} 片 × 2 面）之内，检查面号。`);
+  if(Number.isFinite(apsIn)||caos.length){
+    add('CHG');
+    if(S.optCfree) add('CFREE');
+    if(Number.isFinite(apsIn)) add('APS -'+apsIn);
+    const seen=new Set();
+    caos.forEach(([sf,v],i)=>{ const a=parseInt(sf,10), b=num(v);
+      if(!(a>=1)) err(`硬口径第 ${i+1} 行面号无效。`); else if(a>nsurf) warn(`硬口径面 ${a} 超出 ${nsurf}，检查面号。`);
+      if(!(b>0)) err(`面 ${s(sf)||'?'} 的 CAO 必须是正数（半口径）。`);
+      if(seen.has(a)) warn(`面 ${a} 重复设置了硬口径，后写的生效。`); seen.add(a);
+      add(`${s(sf)} CAO ${s(v)}`); });
+    add('END');
+    if(S.optCfree) info('CFREE：先把所有面改回软口径，再加上表里的硬口径。');
+    if(realStop){ if(Number.isFinite(apsIn)) info(`APS -${aps}：面 ${aps} 设为实光阑，靠光线瞄准找主光线；精修时不再变 YP1。`);
+      if(caos.some(r=>parseInt(r[0],10)===aps)) warn('光阑面有硬口径：每轮 FVF 后再优化会让 F 数漂移（实测轴上因子降到 0.946，约 F/3.06），评价值偏低是假象。结束后看 FVF 的轴上因子，必要时把光阑 CAO 除以它，再 EVAL。'); }
+    const pre=caos.filter(r=>realStop&&parseInt(r[0],10)<aps).length, post=caos.filter(r=>realStop&&parseInt(r[0],10)>aps).length;
+    if(realStop&&caos.length) info(`硬口径：光阑前 ${pre} 个（主要切 Y-LOWER），光阑后 ${post} 个（主要切 Y-UPPER）。要"上缘渐晕多于下缘"，收紧光阑后的面（实测一例：只缩最后一面，只降 VIGYP）。`);
+  } else if(S.vfOn) info('没有硬口径：VFIELD 只影响评价，镜片不会因此变小。要真正缩口径，在这里加硬口径。');
+
+  // 3. FVF before optimizing
+  const fh=toks(S.optFvfh);
+  if(S.optFvf){
+    if(!realStop) err('FVF 需要实光阑（实测报 "FVF REQUIRES A REAL STOP"），先填实光阑面。');
+    if(!fh.length) err('FVF 视场为空。'); if(fh.some(v=>!(+v>=0&&+v<=1))) err('FVF 视场要在 0–1。');
+    if(fh.length>9) err('VFIELD 最多 9 个视场点，FVF 视场也不要超过 9 个。');
+    if(!caos.length) warn('没有硬口径时 FVF 算出的系数接近 1，等于去掉渐晕。');
+    add('FVF '+fh.join(' '));
+    info('FVF 按当前硬口径重新计算 VFIELD。光阑口径大于轴上光束时系数会大于 1（实测 1.194），SYNOPSYS 照用，相当于放大光瞳，看一下 FVF 输出。');
+    info('要拿精修结果再搜一次：把 SAVE 出来的 .RLE（或 FVF 列表）导入渐晕区的"从精修结果导入"，截到 ≤1 后直接生成 DSEARCH 宏。');
+  } else if(S.vfOn) info('不跑 FVF：继续用 DSEARCH 时写进镜头的 VFIELD 评价。');
+
+  // 4. PANT
+  add('PANT');
+  if(S.glmOn&&!S.glOn) glmLines(nop,nop,nop).forEach(l=>add(l));
+  lines(S.spant).forEach(l=>add(l.trim()));
+  const yp1=!realStop&&S.stopFree&&S.stopPos!=='FIX'&&S.stopPos!=='TELE';
+  if(yp1) add('VY 0 YP1');
+  if(S.csd){ add('VLIST CSUM ALL'); add('VLIST CDIFF ALL'); } else add('VLIST RD ALL');
+  add(S.backSet&&s(S.back)!==''?'VLIST TH ALL EXCEPT LB1':'VLIST TH ALL');
+  const surf=[...S.aspSurf].sort((a,b)=>a-b), nterm=parseInt(S.asphN,10)||1;
+  if(S.optAsph&&surf.length){
+    const terms=['CC','G   3','G   6','G  10','G  16'].slice(0,nterm);
+    for(const t of terms) for(const sf of surf) add(`VY ${String(sf).padStart(4)} ${t}`);
+    info(`非球面变量：面 ${surf.join(', ')} 各 ${nterm} 项（${['CC','G3','G6','G10','G16'].slice(0,nterm).join(' + ')}），与 DSEARCH_OPT.MAC 一样列出全部项。`);
+  } else if(S.optAsph&&(S.asphQ||S.asphR)) info('上面没选非球面面号：精修宏不加非球面变量。');
+  if(S.glOn) info('DSEARCH 用了 GLASS 指定实际玻璃：不变玻璃。');
+  else if(S.optGlm) add('VLIST GLM ALL');
+  add('END');
+
+  // 5. AANT
+  add('AANT P'); thkLines(err,warn,info,caos.length>0).forEach(l=>add(l));
+  let fov=toks(S.fov), fwt=toks(S.fwt);
+  if(!fov.length){ fov=['0.0','0.75','1.0']; if(!fwt.length) fwt=['10','2','1']; info('没填 FOV：按 DSEARCH 默认 0 / 0.75 / 1.0、权重 10 / 2 / 1。'); }
+  const rt=s(S.rt)||'0.5', ng=s(S.ngrid)||'4';
+  const nw=toks(S.wavl).length||1;
+  const cols=S.colors==='MONO'?[Math.min(2,nw)]:S.colors==='M'?Array.from({length:nw},(_,i)=>i+1):Array.from({length:Math.min(3,nw)},(_,i)=>i+1);
+  fov.forEach((h,i)=>{ const w=fwt[i]??fwt[fwt.length-1]??'1'; for(const c of cols) add(`${+h===0?'GSR':'GNR'} ${rt} ${w} ${ng} ${c} ${h}`); });
+  if(S.opdmode) warn(`DSEARCH 用了 ${S.opdmode}；这里只生成横向像差光线集。要 OPD / 剪切版本，照 DSEARCH_OPT.MAC 抄。`);
+  if(S.optTarg){
+    if(s(S.back)!==''&&num(S.back)!==0&&!S.backSet) add(`M ${s(S.back)} ${s(S.backW)||'0.1'} A BACK`);
+    if(s(S.totl)!==''&&num(S.totl)!==0) add(`M ${s(S.totl)} ${s(S.totlW)||'0.1'} A TOTL`);
+    if(S.dsens!=='0') add(`M 0 ${s(S.dsensW)||'1'} A ${['','SAT','ESA','SDU','RUD','DAA'][+S.dsens]}`);
+    const O=obb(), pre=[];
+    if(S.twGiht&&O.yimg>0) pre.push(`M ${O.yimg.toFixed(4)} 2 A GIHT`);
+    pre.push(...distLines());
+    pre.push(...craLines());
+    [...pre,...lines(S.saant)].forEach(l=>add(l.trim()));
+    if(s(S.fnumW)!==''||S.twFw100) warn('DSEARCH 里 FNUM 带权重时，DSEARCH_OPT.MAC 里有对应的 1/FNUM 目标，这里没有生成；需要的话从那里抄过来。');
+  }
+  lines(S.optAant).forEach(l=>add(l.trim()));
+  add('END');
+  if(cols.length&&nw<cols[cols.length-1]) err('颜色号超过波长个数。');
+
+  // 6. optimize, FVF between rounds
+  const np=s(S.optPass)||s(S.npass)||'40', loops=Math.max(1,Math.min(10,parseInt(S.optLoops,10)||1));
+  const snap=s(S.optSnap), damp=s(S.optDamp)||s(S.damp)||'1.0';
+  add(snap!==''?`SNAP ${snap}/DAMP ${damp}`:`SNAP/DAMP ${damp}`);
+  for(let i=0;i<loops;i++){
+    add('SYNOPSYS '+np);
+    if(S.optFvf&&!(S.argOn&&i===loops-1)) add('FVF '+fh.join(' '));
+  }
+  if(S.optFvf&&loops>1) info(`${loops} 轮"SYNOPSYS ${np} → FVF"：每轮按新结构的硬口径更新渐晕再优化（实测一例 merit 0.145 → 0.089）。`);
+
+  // 7. real glass insertion
+  if(S.argOn){
+    const L=parseInt(S.argLib,10), cat=S.argCat;
+    if(!(L>=1&&L<=10)) err('ARGLASS 镜库位置必须是 1–10（LIBRARY LOCATION MUST BE FROM 1 TO 10）。');
+    if(L===parseInt(S.llib,10)) warn(`ARGLASS 会把起始镜头和结果存进位置 ${L}，会覆盖 DSEARCH 存在那里的最好结果。`);
+    if(S.glOn) err('DSEARCH 用了 GLASS 指定实际玻璃，没有模型玻璃可换（NO GLASS ELEMENTS FOUND）。');
+    if(!S.optGlm&&!S.glOn) info('精修时没变模型玻璃，ARGLASS 仍会逐个替换。');
+    add('STORE '+(Number.isFinite(L)?L:3));
+    add(`ARGLASS ${Number.isFinite(L)?L:3} QUIET`);
+    add(S.argOrder||'SORT');
+    add('CAT '+cat);
+    const i1=s(S.argI1), i2=s(S.argI2);
+    if(i1!==''||i2!==''){ if(!(+i1>=1&&+i2>=+i1)) err('INCLUDE 要给起止面号，起点 ≤ 终点。'); add(`INCLUDE ${i1||1} TO ${i2||nsurf}`); }
+    const ex=toks(S.argExc); if(ex.length){ if(ex.some(v=>!(+v>=1))) err('EXCLUDE 面号无效。'); add('EXCLUDE '+ex.join(' ')); }
+    if(s(S.argPrice)!==''){ if(cat==='H'||cat==='U') err(`${cat==='H'?'HOYA ':'特殊材料'}目录没有价格数据（V16："${cat==='H'?'HOYA':'UNUSUAL'} CATALOG DOES NOT CONTAIN PRICE INFORMATION"），去掉 PRICE。`); add('PRICE '+s(S.argPrice)); }
+    const cls=[['BUBBLE',S.argBub],['STAIN',S.argSta],['ACID',S.argAci],['ALKALI',S.argAlk],['HUMIDITY',S.argHum]].filter(([,v])=>s(v)!=='');
+    cls.forEach(([k,v])=>add(`${k} ${s(v)}`));
+    if(S.argPref) add('PREF'); if(S.argSafe) add('SAFE'); if(S.argIline) add('ILINE');
+    add('GO');
+    if(cat==='H'&&(cls.length||S.argSafe)) warn('自制的 HOYA.LIB（2026 目录转换）没有填气泡和化学稳定性字段（都是 0），缺数据的玻璃会直接通过这些筛选，等于没筛。');
+    if(cat==='H'&&S.argPref) warn('PREF 依赖 HOYA.LIB 第 24–27 列的代码，自制库这几列统一写的 110，没核对过是否表示"优选"。');
+    if(cat==='U'&&(cls.length||S.argSafe||S.argIline)) err('特殊材料目录没有这些属性数据（UNUSUAL CATALOG DOES NOT HAVE …）。');
+    if(cat==='C') err('ARGLASS 不支持自定义目录 C。');
+    if(S.argIline&&cat!=='O') info('ILINE：目前只有 Ohara 目录有足够多的 i 线玻璃。');
+    ok(`ARGLASS 紧跟在最后一次 SYNOPSYS ${np} 之后（中间只有 STORE），符合"必须紧跟正常优化"的要求。`);
+    if(S.optFvf){ add('FVF '+fh.join(' ')); info('换完玻璃后再 FVF 一次，让 VFIELD 对应最终结构。'); }
+  }
+
+  // 8. report and save
+  if(S.optCap) add('CAP');
+  if(S.optEval) add('EVAL');
+  if(s(S.optSave)!==''){ const nm=s(S.optSave).toUpperCase(); if(/\s/.test(nm)) err('SAVE 文件名不能有空格。'); add('SAVE '+nm); }
+  else info('没填 SAVE 文件名：结果只在当前镜头里，DSEARCH01–10 下次搜索会被覆盖，记得自己存。');
+  if(S.glmOn&&S.glmRestore){ rem('restore program-default model-glass limits'); add('PANT'); glmRestoreLines().forEach(l=>add(l)); add('END'); }
+
+  const bad=out.map((l,i)=>[l,i+1]).filter(([l])=>/[^\x20-\x7e]/.test(l));
+  if(bad.length) err(`第 ${bad.map(b=>b[1]).slice(0,6).join('、')} 行含非 ASCII 字符（中文或全角符号），SYNOPSYS 可能读错，请改成英文。`);
+  if(!C.some(c=>c[0]==='err')) ok('精修宏没有发现会中止的错误。');
+  return {text:out.join('\n')+'\n', checks:C};
+}
+function fmtN(v,d){let s=v.toFixed(d);return s.replace(/0+$/,'').replace(/\.$/,'');}
+function pad(v){v=String(v).trim();return v.padEnd(6,' ');}
+function comb(n,k){if(k<0||k>n)return 0;let r=1;for(let i=1;i<=k;i++)r=r*(n-k+i)/i;return Math.round(r);}
+
+/* ---------- VFIELD curve (same interpolation as SYNOPSYS) ---------- */
+function vfRows(){
+  return S.vf.map(r=>r.map(num)).filter(r=>r.every(Number.isFinite)).sort((a,b)=>a[0]-b[0]);
+}
+function vfAt(rows,h){ // returns [U,L,X]
+  if(!rows.length) return [1,1,1];
+  let prev=[0,1,1,1];
+  for(const r of rows){
+    if(h===r[0]) return [r[1],r[2],r[3]];
+    if(r[0]>h){ const t=(r[0]-prev[0])>0?(h-prev[0])/(r[0]-prev[0]):1; return [1,2,3].map(j=>prev[j]+(r[j]-prev[j])*t); }
+    prev=r;
+  }
+  const L=rows[rows.length-1]; return [L[1],L[2],L[3]];
+}
+const VF_SERIES=[
+  {k:'frac',name:'未渐晕比例',color:'var(--s1)',w:3,dash:'',f:v=>v[2]*(v[0]+v[1])/2},
+  {k:'u',name:'Y-UPPER',color:'var(--s2)',w:2,dash:'',f:v=>v[0]},
+  {k:'l',name:'Y-LOWER',color:'var(--s3)',w:2,dash:'6 4',f:v=>v[1]},
+  {k:'x',name:'X',color:'var(--s4)',w:2,dash:'2 3',f:v=>v[2]}
+];
+const VFC={W:640,H:300,l:46,r:112,t:12,b:40};
+function renderVFChart(){
+  const svg=$('vf-chart'), rows=vfRows(), O=obb();
+  const {W,H,l,r,t,b}=VFC, pw=W-l-r, ph=H-t-b;
+  const mm=O.yimg>0;
+  const X=h=>l+h*pw, Y=v=>t+(1-Math.max(0,Math.min(1.05,v))/1.05)*ph;
+  let g='';
+  for(let v=0;v<=1.0001;v+=0.2){ const y=Y(v); g+=`<line x1="${l}" x2="${l+pw}" y1="${y}" y2="${y}" stroke="var(--line)" stroke-width="1"/><text x="${l-6}" y="${y+4}" text-anchor="end">${v.toFixed(1)}</text>`; }
+  for(let i=0;i<=10;i++){ const h=i/10, x=X(h); g+=`<line x1="${x}" x2="${x}" y1="${t}" y2="${t+ph}" stroke="var(--line)" stroke-width="1" opacity=".6"/>`;
+    if(i%2===0||!mm) g+=`<text x="${x}" y="${t+ph+15}" text-anchor="middle">${mm?(h*O.yimg).toFixed(2):h.toFixed(1)}</text>`; }
+  g+=`<line x1="${l}" x2="${l+pw}" y1="${t+ph}" y2="${t+ph}" stroke="var(--line-strong)" stroke-width="1.2"/>`;
+  g+=`<text class="ttl" x="${l+pw/2}" y="${H-6}" text-anchor="middle">${mm?'像高 ('+esc(S.units)+')':'相对视场 HBAR'}</text>`;
+  g+=`<text class="ttl" transform="translate(12 ${t+ph/2}) rotate(-90)" text-anchor="middle">比例</text>`;
+  const N=200, ends=[];
+  for(const s of [...VF_SERIES].reverse()){
+    let d=''; for(let i=0;i<=N;i++){ const h=i/N, v=s.f(vfAt(rows,h)); d+=(i?'L':'M')+X(h).toFixed(1)+' '+Y(v).toFixed(1); }
+    g+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.w}" stroke-dasharray="${s.dash}" stroke-linejoin="round" stroke-linecap="round"/>`;
+    ends.push({s,v:s.f(vfAt(rows,1))});
+  }
+  const fr=VF_SERIES[0];
+  for(const rr of rows){ const v=fr.f([rr[1],rr[2],rr[3]]); g+=`<circle cx="${X(Math.min(1,rr[0]))}" cy="${Y(v)}" r="4" fill="${fr.color}" stroke="var(--paper)" stroke-width="2"/>`; }
+  // direct labels at the right end, de-collided
+  ends.sort((a,b)=>Y(a.v)-Y(b.v)); let last=-99;
+  for(const e of ends){ let y=Math.max(Y(e.v)+4,last+13); last=y; g+=`<text x="${l+pw+6}" y="${y}" style="fill:var(--ink)">${e.s.k==='frac'?'比例':e.s.name} ${e.v.toFixed(3)}</text>`; }
+  g+=`<line id="vf-cross" x1="0" x2="0" y1="${t}" y2="${t+ph}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 3" visibility="hidden"/>`;
+  g+=`<rect id="vf-hit" x="${l}" y="${t}" width="${pw}" height="${ph}" fill="transparent"/>`;
+  svg.innerHTML=g;
+  const fe=rows.length?VF_SERIES[0].f(vfAt(rows,1)):1;
+  $('vf-frac').innerHTML=S.vfOn&&rows.length?`全视场未渐晕比例 <b>${(fe*100).toFixed(1)}%</b>`:'';
+}
+(function(){
+  const svg=$('vf-chart'), tip=$('vf-tip');
+  const pos=e=>{const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse());};
+  svg.addEventListener('pointermove',e=>{
+    const {l,r,W}=VFC, pw=W-l-r, P=pos(e), h=(P.x-l)/pw;
+    const cross=$('vf-cross'); if(h<0||h>1){ tip.hidden=true; if(cross) cross.setAttribute('visibility','hidden'); return; }
+    const v=vfAt(vfRows(),h), O=obb();
+    cross.setAttribute('x1',P.x); cross.setAttribute('x2',P.x); cross.setAttribute('visibility','visible');
+    tip.innerHTML=`<div>HBAR ${h.toFixed(3)}${O.yimg>0?` · ${(h*O.yimg).toFixed(2)} ${esc(S.units)}`:''}</div>`+
+      VF_SERIES.map(s=>`<div class="r"><i style="border-top-color:${s.color};border-top-style:${s.dash?'dashed':'solid'}"></i>${s.name} ${s.f(v).toFixed(3)}</div>`).join('');
+    tip.hidden=false;
+    const box=svg.getBoundingClientRect(), host=svg.parentElement.getBoundingClientRect();
+    let x=e.clientX-host.left+12; if(x+tip.offsetWidth>host.width) x=e.clientX-host.left-tip.offsetWidth-12;
+    tip.style.left=x+'px'; tip.style.top=(e.clientY-host.top+12)+'px';
+  });
+  svg.addEventListener('pointerleave',()=>{tip.hidden=true; const c=$('vf-cross'); if(c) c.setAttribute('visibility','hidden');});
+})();
+
+/* ---------- OBB calculator panel ---------- */
+function renderCalc(){
+  const O=obb(), u=S.units, d=(v,n)=>Number.isFinite(v)?v.toFixed(n):'—';
+  const ratio=(O.yimg>0&&O.efl>0)?O.yimg/O.efl:NaN;
+  const cells=[
+    ['main','UPP0 半视场角',d(O.upp,4)+' °'],
+    ['main','YMP1 半入瞳',d(O.y,4)+' '+u],
+    ['','UMP0 边缘光线角','0（无限远）'],
+    ['','EPD 入瞳直径',d(O.y*2,4)+' '+u],
+    ['','2ω 全视场角',d(O.upp*2,2)+' °'],
+    ['','NA 像方 1/(2F#)',d(O.F>0?1/(2*O.F):NaN,4)],
+    ['','tanω',d(Math.tan(O.upp*Math.PI/180),4)],
+    [ratio>0.84?'bad':'','像高 / 焦距',d(ratio,4)+(ratio>0.84?'  > 0.84':'')],
+    ['',S.epmode==='calc'?'GIHT 目标（=Y′）':'反推 焦距 / 半像高',S.epmode==='calc'?d(O.yimg,4)+' '+u:d(O.efl,3)+' / '+d(O.yimg,3)]
+  ];
+  $('calc-out').innerHTML=`<div class="cell obbline"><span class="lab">SYSTEM 里的物方定义</span><span class="val">OBB 0 ${esc(O.uppS)} ${esc(O.yS)}</span></div>`+
+    cells.map(([c,l,v])=>`<div class="cell ${c}"><span class="lab">${l}</span><span class="val">${esc(v)}</span></div>`).join('');
+  const fov=toks(S.fov).map(Number).filter(Number.isFinite);
+  const tw=Math.tan(O.upp*Math.PI/180);
+  $('fov-tab').innerHTML='<thead><tr><th>HBAR（FOV 值）</th><th>像高 ('+esc(u)+')</th><th>物方视场角 (°)</th></tr></thead><tbody>'+
+    (fov.length?fov.map(h=>`<tr><td>${h}</td><td>${d(h*O.yimg,3)}</td><td>${d(Math.atan(h*tw)*180/Math.PI,3)}</td></tr>`).join(''):'<tr><td colspan="3" class="mini">在"目标"里填 FOV 后显示</td></tr>')+'</tbody>';
+}
+
+/* ---------- render output ---------- */
+let last={text:'',checks:[]}, lastDs=last, lastOpt=last;
+function curName(){ return (S.outview==='opt'?(S.optFname||'OPT'):(S.fname||'DSEARCH')).toUpperCase(); }
+function update(){
+  $('w-calc').hidden=S.epmode!=='calc';
+  $('w-obb').hidden=S.epmode!=='obb';
+  $('w-stopfix').hidden=S.stopPos!=='FIX';
+  $('w-nq').classList.toggle('disabled',S.qmode==='NONE'); $('w-nr').classList.toggle('disabled',S.qmode==='NONE');
+  $('glm-body').classList.toggle('disabled',!S.glmOn);
+  $('vf-body').classList.toggle('disabled',!S.vfOn);
+  $('vf-body').hidden=!S.vfOpen;
+  { const f=$('vf-fold'); f.setAttribute('aria-expanded',String(!!S.vfOpen)); f.querySelector('.lbl').textContent=S.vfOpen?'收起':'展开';
+    const rows=vfRows(), fe=rows.length?VF_SERIES[0].f(vfAt(rows,1)):1;
+    $('vf-sum').hidden=!!S.vfOpen;
+    $('vf-sum').innerHTML=S.vfOn?`已启用 · <b>${rows.length}</b> 行 · 全视场未渐晕 <b>${(fe*100).toFixed(1)}%</b>`:'未启用：不写 VFIELD，搜索按满光瞳评价。勾选"启用"后展开编辑渐晕表。'; }
+  $('w-vgp').hidden=S.vgShape!=='custom'; $('w-vgpts').hidden=!!S.vgAuto;
+  const vis={'w-randn':S.randOn,'w-imm1':S.immOn,'w-imm2':S.immOn,'w-cov1':S.covOn,'w-cov2':S.covOn,'w-cov3':S.covOn,'w-pla':S.plaOn,
+    'w-glp':S.glOn,'w-gln':S.glOn,'w-wopd':!!S.opdmode,'w-shear':/SHEAR/.test(S.opdmode||''),'w-dsensw':S.dsens!=='0',
+    'w-optlib':S.optSrc==='lib','w-optfile':S.optSrc==='file','w-fvf':S.optFvf,'w-thka':S.thkMode!=='AEC','w-thkaw':S.thkMode!=='AEC','w-cra1':S.craOn,'w-cra2':S.craOn,'w-cra3':S.craOn,
+    'w-dist1':S.twDist,'w-dist2':S.twDist,'w-dist3':S.twDist,'w-dist4':S.twDist};
+  for(const [id,v] of Object.entries(vis)) $(id).hidden=!v;
+  $('arg-body').classList.toggle('disabled',!S.argOn);
+  $('opt-lib').placeholder=String(S.llib||1);
+  renderCalc(); renderVFChart();
+  const nt=parseInt(S.asphN,10);
+  $('asph-terms').textContent='n = '+nt+' → '+(S.asphR?['CC','CC + G3','CC + G3 + G6','CC + G3 + G6 + G10','CC + G3 + G6 + G10 + G16'][nt-1]:'CC（没勾 R 时只有 CC）')+'　（G3=r⁴, G6=r⁶, G10=r⁸, G16=r¹⁰）';
+  $('q-hint').textContent = S.vfOn ? '带 VFIELD 推荐 Q6：QUICK/Q0 的初筛几乎只看近轴三/五阶像差，不感知渐晕。' : 'QUICK = Q3：先用三/五阶像差加 3 条真实光线快速筛选，再用真实光线精修。';
+
+  lastDs=generate(); lastOpt=generateOpt();
+  const isOpt=S.outview==='opt'; last=isOpt?lastOpt:lastDs;
+  const pre=$('out'); pre.innerHTML='';
+  for(const ln of last.text.replace(/\n$/,'').split('\n')){
+    const s=document.createElement('span'); s.className='ln';
+    const t=ln.trim();
+    if(t.startsWith('!')) s.innerHTML=`<span class="c">${esc(ln)}</span>`;
+    else { const m=ln.match(/^(\s*)(\S+)(.*)$/); s.innerHTML = m?`${m[1]}<span class="k">${esc(m[2])}</span>${esc(m[3])}`:esc(ln); }
+    pre.appendChild(s);
+  }
+  $('out-fn').textContent=curName()+'.MAC';
+  const ne=lastOpt.checks.filter(c=>c[0]==='err').length, nd=lastDs.checks.filter(c=>c[0]==='err').length;
+  const vb=$('outview').querySelectorAll('button'); vb[0].textContent='DSEARCH 宏'+(nd?` · ${nd} 错`:''); vb[1].textContent='精修宏'+(ne?` · ${ne} 错`:'');
+  const cnt={err:0,warn:0,info:0,ok:0}; last.checks.forEach(c=>cnt[c[0]]++);
+  $('chk-sum').innerHTML=[['err','错误'],['warn','注意'],['info','说明'],['ok','通过']].map(([k,t])=>`<span class="pill ${k}">${t} ${cnt[k]}</span>`).join('');
+  const order={err:0,warn:1,ok:2,info:3};
+  $('checks').innerHTML=[...last.checks].sort((a,b)=>order[a[0]]-order[b[0]]).map(([k,t])=>`<li><span class="pill ${k}">${({err:'错误',warn:'注意',info:'说明',ok:'通过'})[k]}</span><span>${esc(t)}</span></li>`).join('');
+  save();
+}
+
+/* ---------- copy / download ---------- */
+function flash(t,bad){const el=$('toast');el.textContent=t;el.style.color=bad?'var(--err)':'var(--ok)';clearTimeout(flash._t);flash._t=setTimeout(()=>el.textContent='',2400);}
+$('btn-copy').addEventListener('click',()=>{
+  const txt=last.text.replace(/\n/g,'\r\n');
+  const fallback=()=>{const r=document.createRange();r.selectNodeContents($('out'));const s=getSelection();s.removeAllRanges();s.addRange(r);flash('已选中全文，按 Ctrl+C 复制');};
+  try{ navigator.clipboard.writeText(txt).then(()=>flash('已复制'),fallback); }catch(e){ fallback(); }
+});
+if(location.protocol==='file:'){ const b=$('btn-dl'); b.hidden=false;
+  b.addEventListener('click',()=>{const blob=new Blob([last.text.replace(/\n/g,'\r\n')],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=curName()+'.MAC';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);flash('已保存到下载目录');});
+}
+$('btn-sample').addEventListener('click',()=>{S=JSON.parse(JSON.stringify(SAMPLE));toForm();update();flash('已载入示例');});
+$('btn-reset').addEventListener('click',()=>{S=JSON.parse(JSON.stringify(DEFAULTS));toForm();update();flash('已恢复默认');});
+
+/* ---------- import ---------- */
+$('btn-import').addEventListener('click',()=>{
+  const txt=$('imp-text').value; if(!txt.trim()){ $('imp-msg').textContent='没有内容。'; return; }
+  const T=JSON.parse(JSON.stringify(DEFAULTS)); T.signs=[]; T.aspSurf=[]; T.vf=[]; T.vfOn=false; T.annOn=false; T.qmode='NONE'; T.stopFree=false; T.glmOn=false; T.asphQ=false; T.asphR=false;
+  let block='', pre=true, vfLeft=0, sp=[], sa=[], sysx=[], gx=[], n3=s=>s.slice(0,3).toUpperCase(), got=0, glSide='', glmPre=false, glmSp=false;
+  const GLMK={CUL:'cul',FUL:'ful',CLL:'cll',FLL:'fll'};
+  for(const raw of txt.split(/\r?\n/)){
+    const line=raw.trim(); if(!line) continue;
+    if(line.startsWith('!')){ const m=line.match(/^!\s*CORE\s+(\d+)/i); if(m){T.coreOn=false;T.core=+m[1];} continue; }
+    const t=line.split(/\s+/), k=n3(t[0]);
+    if(vfLeft>0){ T.vf.push([t[0],t[1]||'',t[2]||'',t[3]||'']); vfLeft--; continue; }
+    if(block==='SPANT'){ if(k==='END'){block='';}
+      else if(GLMK[k]){ T[GLMK[k]]=t[1]||''; T.glmOn=true; glmSp=true; }
+      else if(k==='CBO'||k==='FBO'){ T[k==='CBO'?'cbounds':'fbounds']=t.slice(1).join(' '); T.glmOn=true; glmSp=true; }
+      else sp.push(line); continue; }
+    if(block==='SAANT'){ if(k==='END'){block='';} else sa.push(line); continue; }
+    if(block==='PRE'){ if(k==='END'){block='';continue;} T.glmOn=true; glmPre=true;
+      if(k==='CUL')T.cul=t[1]; else if(k==='FUL')T.ful=t[1]; else if(k==='CLL')T.cll=t[1]; else if(k==='FLL')T.fll=t[1]; else if(k==='CBO')T.cbounds=t.slice(1).join(' '); else if(k==='FBO')T.fbounds=t.slice(1).join(' '); continue; }
+    if(k==='PAN'&&pre){ block='PRE'; continue; }
+    if(k==='COR'){ T.coreOn=true; T.core=+t[1]||14; continue; }
+    if(k==='DSE'&&block!=='GOALS'){ if((t[1]||'').toUpperCase()==='PLOT'){ T.dplot=true; continue; }
+      pre=false; T.llib=+t[1]||1; T.quiet=t.slice(2).some(x=>n3(x)==='QUI'||x.toUpperCase()==='Q'); got++; continue; }
+    if(k==='EVA'&&block===''){ T.runmode='EVAL'; continue; }
+    if(k==='SYS'){ block='SYS'; continue; }
+    if(k==='GOA'){ block='GOALS'; continue; }
+    if(k==='SPE'){ block=(t[1]&&n3(t[1])==='PAN')?'SPANT':'SAANT'; continue; }
+    if(k==='GO'&&t[0].length===2){ block=''; pre=false; continue; }
+    if(k==='END'){ block=''; continue; }
+    if(block==='SYS'){
+      if(k==='ID') T.sid=line.slice(2).trim();
+      else if(k==='OBB'){ T.epmode='obb'; T.upp0=t[2]||''; T.ymp1=t[3]||''; }
+      else if(k==='WAV'||k==='WA1') T.wavl=t.slice(1).join(' ');
+      else if(k==='WA2') T.wavl=(T.wavl+' '+t.slice(1).join(' ')).trim();
+      else if(k==='WT1') T.wt=t.slice(1).join(' ');
+      else if(k==='WT2') T.wt=(T.wt+' '+t.slice(1).join(' ')).trim();
+      else if(k==='UNI') T.units=(t[1]||'MM').toUpperCase();
+      else if(k==='VFI'){ T.vfOn=true; T.vfOpen=true; vfLeft=parseInt(t[1],10)||0; }
+      else sysx.push(line);
+      got++; continue;
+    }
+    if(block==='GOALS'){
+      got++;
+      if(glSide){ const cat=t[0].toUpperCase(), nm=t.slice(1).join(' ');
+        if(glSide==='N'){ T.glnCat=cat; T.gln=nm; } else { T.glpCat=cat; T.glp=nm; } glSide=''; T.glOn=true; continue; }
+      switch(k){
+        case 'RST': case 'RDS': T.rstart=t.slice(1).join(' '); break;
+        case 'THS': case 'TST': T.thstart=t[1]||''; break;
+        case 'AST': T.astart=t[1]||''; break;
+        case 'NST': T.nstN=t[1]||''; T.nstV=t[2]||''; break;
+        case 'RAN': T.randOn=true; T.randN=t[1]||''; break;
+        case 'CSD': T.csd=true; break;
+        case 'AFO': T.afocal=true; break;
+        case 'IMM': T.immOn=true; T.immN=t[1]||''; T.immV=t[2]||''; break;
+        case 'COV': T.covOn=true; T.covT=t[1]||''; T.covN=t[2]||''; T.covV=t[3]||''; break;
+        case 'PLA': T.plaOn=true; T.pla=t.slice(1).join(' '); break;
+        case 'GLA': glSide=(t[1]||'').toUpperCase().startsWith('NEG')?'N':'P';
+                    if(t.length>3){ if(glSide==='N'){T.glnCat=t[2].toUpperCase();T.gln=t.slice(3).join(' ');} else {T.glpCat=t[2].toUpperCase();T.glp=t.slice(3).join(' ');} glSide=''; T.glOn=true; } break;
+        case 'DAM': T.damp=t[1]||''; break;
+        case 'PSD': T.psd=((t[1]||'').toUpperCase()==='III'||t[1]==='3')?'III':'II'; break;
+        case 'NGR': T.ngrid=t[1]||''; break;
+        case 'OPD': T.opdmode='OPD'; T.wopd=t[1]||''; break;
+        case 'OPS': T.opdmode='OPSHEAR'; T.wopd=t[1]||''; break;
+        case 'TOP': T.opdmode='TOPD'; T.wopd=t[1]||''; break;
+        case 'TOS': T.opdmode='TOSHEAR'; T.wopd=t[1]||''; break;
+        case 'SHE': T.shear=t[1]||''; break;
+        case 'DSE': T.dsens=String(Math.max(0,Math.min(5,parseInt(t[1],10)||0))); T.dsensW=t[2]||''; break;
+        case 'REV': T.revert=true; break;
+        case 'TRA': T.track=true; break;
+        case 'STA': T.stats=true; break;
+        case 'NOL': T.noload=true; break;
+        case 'DEL': T.delay=t[1]||''; break;
+        case 'SAM': T.runmode='SAMPLE'; break;
+        case 'ELE': case 'ELS': T.nel=+t[1]; T.npos=t[2]&&/^\d+$/.test(t[2])?t[2]:''; break;
+        case 'SIN': T.signmode='single'; T.signs=t.slice(1).map(x=>x.toUpperCase()==='P'||x==='1'?'P':'N'); break;
+        case 'FIL': T.signmode='filter'; T.signs=t.slice(1).map(x=>{x=x.toUpperCase();return x==='P'||x==='N'?x:'';}); break;
+        case 'ASP': for(const x of t.slice(1)){ const X=x.toUpperCase(); if(X==='Q')T.asphQ=true; else if(X==='R')T.asphR=true; }
+                    if(t[1]&&/^\d+$/.test(t[1])){ T.asphN=t[1]; T.aspSurf=t.slice(2).map(Number).filter(Number.isFinite); } break;
+        case 'FNU': case 'FNO': T.fnum=t[1]||''; T.fnumW=t[2]||''; break;
+        case 'BAC': T.back=t[1]||''; if(t[2]&&n3(t[2])==='SET'){T.backSet=true;} else T.backW=t[2]||''; break;
+        case 'TOT': T.totl=t[1]||''; T.totlW=t[2]||''; break;
+        case 'STO': { const s=(t[1]||'').toUpperCase(); if(s.startsWith('TEL')||s.startsWith('INF')) T.stopPos='TELE'; else if(s.startsWith('FRE'))T.stopFree=true; else if(s.startsWith('REA'))T.stopReal=true; else if(s.startsWith('FIX')){T.stopPos='FIX';T.stopFixN=t[2]||'';} else if(['FIR','MID','LAS'].includes(s.slice(0,3))) T.stopPos={FIR:'FIRST',MID:'MIDDLE',LAS:'LAST'}[s.slice(0,3)]; break; }
+        case 'RT': T.rt=t[1]||''; break;
+        case 'FOV': T.fov=t.slice(1).join(' '); break;
+        case 'FWT': T.fwt=t.slice(1).join(' '); break;
+        case 'NPA': case 'PAS': T.npass=t[1]||''; break;
+        case 'ANN': T.annOn=true; T.annT=t[1]||''; T.annC=t[2]||''; T.annQ=(t[3]||'').toUpperCase()==='Q'; T.annN=t[4]||''; break; // word 4 = Q flag, word 5 = passes
+        case 'COL': { const v=(t[1]||'3').toUpperCase(); T.colors=v==='3'?'3':v==='M'?'M':'MONO'; break; }
+        case 'MON': T.colors='MONO'; break;
+        case 'SNA': T.snap=t[1]||''; break;
+        case 'QUI': T.qmode='QUICK'; T.nq=t[1]||''; T.nr=t[2]||''; break;
+        case 'Q3': T.qmode='QUICK'; T.nq=t[1]||''; T.nr=t[2]||''; break;
+        case 'Q6': T.qmode='Q6'; T.nq=t[1]||''; T.nr=t[2]||''; break;
+        case 'Q0': T.qmode='Q0'; T.nq=t[1]||''; T.nr=t[2]||''; break;
+        case 'KEE': T.keep=t[1]||''; break;
+        case 'PDI': T.pdist=true; break;
+        default: gx.push(line); got--;
+      }
+      continue;
+    }
+  }
+  T.spant=sp.join('\n'); T.saant=absorbSaant(sa,T).join('\n'); T.sysextra=sysx.filter(l=>n3(l.split(/\s+/)[0])!=='UNI').join('\n'); T.goalextra=gx.join('\n');
+  T.fname=S.fname; T.comments=S.comments; T.glmRestore=S.glmRestore;
+  if(T.glmOn) T.glmWhere=glmPre&&glmSp?'both':glmPre?'pre':'special';
+  for(const key of Object.keys(S)) if(/^(opt|arg)/.test(key)||key==='cao'||key==='outview') T[key]=S[key]; // keep the refinement-macro settings
+  if(T.npass===DEFAULTS.npass&&!txt.match(/NPAS|PASS/i)) T.npass='';
+  if(!got){ $('imp-msg').textContent='没有识别到 DSEARCH 内容。'; return; }
+  // OBB + FNUM → 半像高 / 焦距, so the calculator inputs reproduce the same OBB
+  if(T.epmode==='obb'){ const u=num(T.upp0), y=num(T.ymp1), F=num(T.fnum);
+    if(u>0&&y>0&&F>0){ const f=2*y*F; T.efl=String(+f.toFixed(6)); T.yimg=String(+(f*Math.tan(u*Math.PI/180)).toFixed(6)); T.epmode='calc'; } }
+  S=T; toForm(); update();
+  $('imp-msg').textContent=`已回填。未识别的行放进了"其他"文本框（${sysx.length+gx.length} 行）。`;
+});
+
+toForm(); update();
+})();
+</script>
+
+</body>
+</html>
