@@ -246,11 +246,12 @@ button.fold[aria-expanded="true"] .chev{transform:translateY(2px) rotate(-135deg
   </div>
   <div class="row" style="margin-top:8px">
     <label class="chk"><input id="cra-on" type="checkbox"> 限制 CRA（像面主光线角）</label>
-    <label class="f" id="w-cra1"><span>CRA 上限 (°)</span><input id="cra-max" type="number" step="any" min="0" max="89" class="w4"></label>
+    <label class="f" id="w-cra1"><span>CRA 上限 (°)</span><input id="cra-max" type="number" step="any" min="0" max="89" class="w4" placeholder="不限"></label>
+    <label class="f" id="w-cra4"><span>CRA 下限 (°)</span><input id="cra-min" type="number" step="any" min="0" max="89" class="w4" placeholder="不限"></label>
     <label class="f" id="w-cra2"><span>权重</span><input id="cra-w" type="number" step="any" class="w4" placeholder="1"></label>
-    <label class="chk" id="w-cra3"><input id="cra-all" type="checkbox"> 每个 FOV 视场都限制（不勾只限全视场）</label>
+    <label class="chk" id="w-cra3"><input id="cra-all" type="checkbox"> 上限每个 FOV 视场都限制（不勾只限全视场）</label>
   </div>
-  <p class="hint">FNUM 权重 100 避免曲率求解产生超短半径；像高、畸变、CRA 写进 SPECIAL AANT 开头，精修宏也带上。畸变按百分比写成组合项 <span class="mono">LUA 3 1 1 A P YA h / DIV GIHT / MUL CONST 100/h / S CONST 100</span>，算出来就是 100·(YA − h·GIHT)/(h·GIHT)，负值是桶形；"上限"模式超出 1 个百分点时罚值等于权重。V16 按行从上到下把每一项依次加、减、乘、除到同一个累加值上，没有先乘除后加减（手册 §10.3：每一项都与前面的分量依次组合），所以这样写正好是畸变百分比。OBB 的 HBAR 是线性像高比例（手册 §3.1.1），h 视场的理想像高就是 h·GIHT。CRA 写成 <span class="mono">LUA tan(CRA) 权重 窗口 A P HH h 0 0 0</span>：像面上主光线角正切的绝对值上限，超出 2° 时罚值等于权重（手册 §10.3.5.1）。带 VFIELD 时 YEN=0 的主光线在渐晕后光束的中心，就是传感器实际接收到的主光线角。</p>
+  <p class="hint">FNUM 权重 100 避免曲率求解产生超短半径；像高、畸变、CRA 写进 SPECIAL AANT 开头，精修宏也带上。畸变按百分比写成组合项 <span class="mono">LUA 3 1 1 A P YA h / DIV GIHT / MUL CONST 100/h / S CONST 100</span>，算出来就是 100·(YA − h·GIHT)/(h·GIHT)，负值是桶形；"上限"模式超出 1 个百分点时罚值等于权重。V16 按行从上到下把每一项依次加、减、乘、除到同一个累加值上，没有先乘除后加减（手册 §10.3：每一项都与前面的分量依次组合），所以这样写正好是畸变百分比。OBB 的 HBAR 是线性像高比例（手册 §3.1.1），h 视场的理想像高就是 h·GIHT。CRA 写成 <span class="mono">LUA tan(CRA) 权重 窗口 A P HH h 0 0 0</span>：像面上主光线角正切的绝对值上限，超出 2° 时罚值等于权重（手册 §10.3.5.1）。下限写成 <span class="mono">LLA tan(CRA) 权重 窗口 A P HH 1.0 0 0 0</span>（绝对值下限），只加在全视场，因为小视场的主光线角本来就接近 0；低于下限 2° 时罚值等于权重。带 VFIELD 时 YEN=0 的主光线在渐晕后光束的中心，就是传感器实际接收到的主光线角。</p>
   <div class="tblwrap" style="margin-top:8px"><table class="vf fovtab" id="fov-tab"></table></div>
   <p class="hint">FOV 填的是 HBAR，是<b>线性像高比例</b>：HBAR=0.7 对应像高 0.7·Y′、物方角 atan(0.7·tanω)，不是 0.7·ω。只有 OBD 物体才按角度比例。</p>
   <div class="row" style="margin-top:6px">
@@ -600,7 +601,7 @@ const DEFAULTS={
   optPass:'40', optLoops:'2', optSnap:'10', optDamp:'1.0', optAsph:true, optGlm:true, optTarg:true, optAant:'',
   argOn:false, argLib:'3', argCat:'H', argOrder:'SORT', argI1:'', argI2:'', argExc:'', argPrice:'', argBub:'', argSta:'', argAci:'', argAlk:'', argHum:'', argPref:false, argSafe:false, argIline:false,
   optCap:true, optEval:true, optSave:'',
-  craOn:false, craMax:'30', craW:'', craAll:true,
+  craOn:false, craMax:'30', craMin:'', craW:'', craAll:true,
   thkMode:'AFE', thkG:'1.0', thkGW:'', thkA:'1.0', thkAW:'', thkCmax:'', thkCmaxW:'', thkCmin:'', thkCminW:'', thkDs:false
 };
 const CAO_PRESET_EXAMPLE=[['1','11'],['7','6.5'],['12','9']]; // example: s1 cuts Y-LOWER, s12 cuts Y-UPPER, s7 = real stop
@@ -653,7 +654,7 @@ const BIND=[['llib','llib','num'],['quiet','quiet','chk'],['coreOn','core-on','c
  ['argOn','arg-on','chk'],['argLib','arg-lib'],['argCat','arg-cat'],['argI1','arg-i1'],['argI2','arg-i2'],['argExc','arg-exc'],['argPrice','arg-price'],
  ['argBub','arg-bub'],['argSta','arg-sta'],['argAci','arg-aci'],['argAlk','arg-alk'],['argHum','arg-hum'],['argPref','arg-pref','chk'],['argSafe','arg-safe','chk'],['argIline','arg-iline','chk'],
  ['optCap','opt-cap','chk'],['optEval','opt-eval','chk'],['optSave','opt-save'],
- ['craOn','cra-on','chk'],['craMax','cra-max'],['craW','cra-w'],['craAll','cra-all','chk'],
+ ['craOn','cra-on','chk'],['craMax','cra-max'],['craMin','cra-min'],['craW','cra-w'],['craAll','cra-all','chk'],
  ['thkMode','thk-mode'],['thkG','thk-g'],['thkGW','thk-gw'],['thkA','thk-a'],['thkAW','thk-aw'],['thkCmax','thk-cmax'],['thkCmaxW','thk-cmaxw'],['thkCmin','thk-cmin'],['thkCminW','thk-cminw'],['thkDs','thk-ds','chk']];
 
 function toForm(){
@@ -1099,11 +1100,14 @@ function generate(){
         :`畸变 |D| ≤ ${Math.abs(v)}%：${nf} 个视场，每个 4 行；超出 1 个百分点时罚值等于权重。`);
       if(S.distMode==='M'&&v!==0&&nf>1) warn('各视场用同一个非零畸变目标不合理（畸变一般随视场变化）。非零目标建议只控全视场，或改用"上限"。');
       if(Math.abs(v)<0.5&&O.efl>0&&O.yimg/O.efl>0.58) info('广角镜头把畸变压到 0.5% 以内代价很大，后组会变复杂；先用较宽的上限搜索，精修时再收紧。'); } }
-  if(S.craOn){ const cl=craLines();
-    if(!cl.length) err('CRA 上限要在 0–89° 之间。');
-    else { pre.push(...cl);
-      info(`CRA ≤ ${S.craMax}°：${cl.length} 条限制，按像面主光线角正切 |HH| ≤ ${Math.tan(num(S.craMax)*Math.PI/180).toFixed(4)}。SPECIAL AANT 在 QUICK 初筛阶段也会生效。`);
-      if(num(S.craMax)<10) info('CRA 上限很小，接近像方远心，后组会变大。远心可以直接用 M 0 1 A P HH 1。'); } }
+  if(S.craOn){ const cl=craLines(), {a,b}=craParts(), tn=d=>Math.tan(d*Math.PI/180).toFixed(4);
+    if(!cl.length) err(a===null&&b===null?'限制 CRA：上限和下限至少填一个。':(a!==null&&b!==null&&a>0&&b>=a)?'CRA 下限要小于上限。':'CRA 上限、下限要在 0–89° 之间。');
+    else { pre.push(...cl); const nU=cl.filter(l=>/^LUA/.test(l)).length, parts=[];
+      if(a!==null) parts.push(`上限 ${a}°（${nU} 个视场，|HH| ≤ ${tn(a)}）`);
+      if(b!==null) parts.push(`下限 ${b}°（全视场，|HH| ≥ ${tn(b)}）`);
+      info(`CRA ${parts.join('，')}，按像面主光线角正切限制。SPECIAL AANT 在 QUICK 初筛阶段也会生效。`);
+      if(a!==null&&a<10) info('CRA 上限很小，接近像方远心，后组会变大。远心可以直接用 M 0 1 A P HH 1。');
+      if(a!==null&&b!==null&&a-b<3) info(`CRA 上下限只差 ${+(a-b).toFixed(2)}°，接近直接给目标值，搜索空间会被压得很窄。`); } }
   if(S.thkDs){ pre.unshift(...thkLines(err,warn,info,false));
     info('厚度控制写进了 SPECIAL AANT：它排在 DSEARCH 自动生成的 AEC/ACC 之后，会覆盖它们（手册说可以这样改默认参数）。搜索阶段用 AFE 还没实测过。'); }
   else if(S.vfOn) warn('带 VFIELD 时边厚基本没被控制住。DSEARCH 自动加的 AEC 只看全视场的上、下边缘光线，而且光瞳已经按 VFIELD 缩小（手册 §10.3.7）。前组口径往往由小视场决定，PAD 又按不渐晕的软口径画镜片。实测一轮 10 个结果：AEC 位置边厚 0.7–1.0 mm，按渐晕后各视场光束算是 −0.07–0.7 mm，按 PAD 画的口径是 −0.7 到 −5.4 mm。可以勾选精修宏里的"也写进 DSEARCH 的 SPECIAL AANT"，用 AFE 在口径处控制（偏保守，搜索阶段还没实测）；搜索完用 仓库里附带的 rle_edge_check.py 检查。');
@@ -1149,14 +1153,24 @@ function thkLines(err,warn,info,hardCao){
   else if(S.vfOn||hardCao) warn(`${S.thkMode} 在边缘光线处量边厚，并按渐晕缩小光瞳，量的位置在镜片实际外缘之内，外圈边厚不受控制。建议改用 AFE。`);
   return L;
 }
-/* chief-ray-angle limit at the image: |HH| <= tan(CRA), one line per field (LUA = upper limit of |value|) */
+/* chief-ray angle at the image. Upper limit |HH| <= tan(max), one line per field (LUA = upper limit of |value|);
+   lower limit |HH| >= tan(min) at full field only (LLA = lower limit of |value|). Blank = no limit. */
+function craParts(){
+  const g=v=>{const r=String(v??'').trim(); return r===''?null:num(r);};
+  return {a:g(S.craMax), b:g(S.craMin)};
+}
 function craLines(){
   if(!S.craOn) return [];
-  const a=num(S.craMax); if(!(a>0&&a<89)) return [];
-  const t=Math.tan(a*Math.PI/180), win=Math.tan((a+2)*Math.PI/180)-t, w=String(S.craW??'').trim()||'1';
-  const fov=toks(S.fov).map(Number).filter(h=>h>0&&h<=1);
-  const fs=S.craAll?(fov.length?fov:[0.75,1]):[1];
-  return fs.map(h=>`LUA ${t.toFixed(4)} ${w} ${win.toFixed(4)} A P HH ${fmt(h)} 0 0 0`);
+  const {a,b}=craParts(), ok=x=>x===null||(x>0&&x<89);
+  if(!ok(a)||!ok(b)||(a===null&&b===null)||(a!==null&&b!==null&&b>=a)) return [];
+  const T=d=>Math.tan(d*Math.PI/180), w=String(S.craW??'').trim()||'1', L=[];
+  if(a!==null){ const t=T(a), win=T(a+2)-t;
+    const fov=toks(S.fov).map(Number).filter(h=>h>0&&h<=1);
+    const fs=S.craAll?(fov.length?fov:[0.75,1]):[1];
+    L.push(...fs.map(h=>`LUA ${t.toFixed(4)} ${w} ${win.toFixed(4)} A P HH ${fmt(h)} 0 0 0`)); }
+  if(b!==null){ const t=T(b), win=t-T(Math.max(b-2,0));
+    L.push(`LLA ${t.toFixed(4)} ${w} ${win.toFixed(4)} A P HH 1.0 0 0 0`); }
+  return L;
 }
 /* distortion in percent at HBAR h: 100*YA/(h*GIHT) - 100. A/S/MUL/DIV combine strictly top to bottom with the
    previous components (manual 10.3), so this 4-line composite is exactly the percentage. OBB HBAR is a linear height fraction. */
@@ -1174,7 +1188,7 @@ function distLines(){
 }
 /* pull the generator's own distortion / CRA / GIHT lines out of an imported SPECIAL AANT and back into the controls */
 function absorbSaant(sa,T){
-  const out=[], dist=[], cra=[]; let giht=false;
+  const out=[], dist=[], cra=[], craLo=[]; let giht=false;
   for(let i=0;i<sa.length;i++){
     const l=sa[i].trim(), nx=k=>(sa[i+k]||'').trim();
     let m=l.match(/^(M|LUA)\s+(\S+)\s+(\S+)(?:\s+(\S+))?\s+A\s+P\s+YA\s+(\S+)$/i);
@@ -1182,17 +1196,22 @@ function absorbSaant(sa,T){
        &&(m[1].toUpperCase()==='LUA')===(m[4]!==undefined)){
       dist.push({mode:m[1].toUpperCase(),t:m[2],w:m[3],h:+m[5],src:sa.slice(i,i+4)}); i+=3; continue; }
     if(/^M\s+\S+\s+2\s+A\s+GIHT$/i.test(l)){ giht=true; continue; }
-    m=l.match(/^LUA\s+(\S+)\s+(\S+)\s+(\S+)\s+A\s+P\s+HH\s+(\S+)\s+0\s+0\s+0$/i);
-    if(m){ cra.push({t:+m[1],w:m[2],h:+m[4],src:[sa[i]]}); continue; }
+    m=l.match(/^(LUA|LLA)\s+(\S+)\s+(\S+)\s+(\S+)\s+A\s+P\s+HH\s+(\S+)\s+0\s+0\s+0$/i);
+    if(m){ (m[1].toUpperCase()==='LUA'?cra:craLo).push({t:+m[2],w:m[3],h:+m[5],src:[sa[i]]}); continue; }
     out.push(sa[i]);
   }
   const same=(a,k)=>a.every(x=>x[k]===a[0][k]);
   if(dist.length&&same(dist,'mode')&&same(dist,'t')&&same(dist,'w')){
     const d=dist[0]; T.twDist=true; T.distMode=d.mode; T.distVal=d.t; T.distW=d.w==='1'?'':d.w; T.distAll=dist.length>1||d.h!==1;
   } else dist.forEach(x=>out.push(...x.src));
-  if(cra.length&&same(cra,'t')&&same(cra,'w')&&cra[0].t>0){
-    const c=cra[0]; T.craOn=true; T.craMax=String(+(Math.atan(c.t)*180/Math.PI).toFixed(2)); T.craW=c.w==='1'?'':c.w; T.craAll=cra.length>1||c.h!==1;
-  } else cra.forEach(x=>out.push(...x.src));
+  const deg=t=>String(+(Math.atan(t)*180/Math.PI).toFixed(2));
+  const upOk=cra.length>0&&same(cra,'t')&&same(cra,'w')&&cra[0].t>0;
+  const loOk=craLo.length===1&&craLo[0].h===1&&craLo[0].t>0&&(!cra.length||(upOk&&craLo[0].w===cra[0].w&&craLo[0].t<cra[0].t));
+  if(upOk||loOk){ const w=(upOk?cra[0]:craLo[0]).w; T.craOn=true; T.craW=w==='1'?'':w;
+    T.craMax=upOk?deg(cra[0].t):''; if(upOk) T.craAll=cra.length>1||cra[0].h!==1;
+    T.craMin=loOk?deg(craLo[0].t):''; }
+  if(!upOk) cra.forEach(x=>out.push(...x.src));
+  if(!loOk) craLo.forEach(x=>out.push(...x.src));
   if(giht) T.twGiht=true;
   return out;
 }
@@ -1465,7 +1484,7 @@ function update(){
   $('w-vgp').hidden=S.vgShape!=='custom'; $('w-vgpts').hidden=!!S.vgAuto;
   const vis={'w-randn':S.randOn,'w-imm1':S.immOn,'w-imm2':S.immOn,'w-cov1':S.covOn,'w-cov2':S.covOn,'w-cov3':S.covOn,'w-pla':S.plaOn,
     'w-glp':S.glOn,'w-gln':S.glOn,'w-wopd':!!S.opdmode,'w-shear':/SHEAR/.test(S.opdmode||''),'w-dsensw':S.dsens!=='0',
-    'w-optlib':S.optSrc==='lib','w-optfile':S.optSrc==='file','w-fvf':S.optFvf,'w-thka':S.thkMode!=='AEC','w-thkaw':S.thkMode!=='AEC','w-cra1':S.craOn,'w-cra2':S.craOn,'w-cra3':S.craOn,
+    'w-optlib':S.optSrc==='lib','w-optfile':S.optSrc==='file','w-fvf':S.optFvf,'w-thka':S.thkMode!=='AEC','w-thkaw':S.thkMode!=='AEC','w-cra1':S.craOn,'w-cra2':S.craOn,'w-cra3':S.craOn,'w-cra4':S.craOn,
     'w-dist1':S.twDist,'w-dist2':S.twDist,'w-dist3':S.twDist,'w-dist4':S.twDist};
   for(const [id,v] of Object.entries(vis)) $(id).hidden=!v;
   $('arg-body').classList.toggle('disabled',!S.argOn);
