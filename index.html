@@ -368,6 +368,12 @@ button.fold[aria-expanded="true"] .chev{transform:translateY(2px) rotate(-135deg
     </div>
     <p class="hint">曲线按 SYNOPSYS 的插值规则画：视场点之间直线、末点以外沿用末点。未渐晕比例 = 保留光瞳椭圆面积 / 满光瞳面积 = X·(上+下)/2，与 Zemax Vignetting Diagram 的纵轴同义。</p>
     <p class="hint">曲线：系数 = 1 − (1 − 全视场值)·tᵖ，t =（视场 − 起始视场）/（1 − 起始视场）。p = 1 为线性，p = 2 为平抛（前段平、越靠边缘掉得越快），p 越大越"平到最后才掉"。系数是保留的光瞳比例（相对轴上入瞳半径）。光束高度 =（上+下）/2，中心偏移 =（上−下）/2，主光线随中心一起偏移。视场间线性插值，末点以外沿用末点。名字与常规作图相反：<b>Y-LOWER</b> 是被前组口径切的那条，<b>Y-UPPER</b> 是被后组切的那条。VFIELD 只影响评价与追迹，不会缩小镜片口径。</p>
+    <div class="row" style="margin-top:10px">
+      <label class="chk"><input id="rcl-on" type="checkbox"> 按渐晕后的光束控制边厚（RCLEAR）</label>
+      <label class="f" id="w-rcl1"><span>最小边厚（镜头单位）</span><input id="rcl-min" type="number" step="any" class="w4" placeholder="1 mm"></label>
+      <label class="f" id="w-rcl2"><span>权重</span><input id="rcl-w" type="number" step="any" class="w4" placeholder="1"></label>
+    </div>
+    <p class="hint">DSEARCH 自动加的 AEC 只看全视场的上、下边缘光线，而带渐晕时，很多镜片的光束口径是中间视场决定的，那里的边厚没人管。RCLEAR 沿一条指定光线，对每一对相邻面上的交点 Z 坐标差加下限（手册 §10.3.1.2，用 LLL 规则；V16 程序里有这条用法说明）。这里对 FOV 里每个视场的上、下边缘光线和 X 方向边缘光线各写一行（轴上一行），面号 1 到 2×元件数，玻璃和空气间隔用同一个下限（不填 = 1 mm，和 AEC 默认一样），比下限低一半时罚值等于权重。它量的是光束经过的位置；PAD 按不渐晕的口径画镜片，外圈仍可能画成负的，那部分没有光通过，精修时按光束口径给这些面加硬口径即可。</p>
   </div>
 </section>
 
@@ -601,7 +607,7 @@ const DEFAULTS={
   optPass:'40', optLoops:'2', optSnap:'10', optDamp:'1.0', optAsph:true, optGlm:true, optTarg:true, optAant:'',
   argOn:false, argLib:'3', argCat:'H', argOrder:'SORT', argI1:'', argI2:'', argExc:'', argPrice:'', argBub:'', argSta:'', argAci:'', argAlk:'', argHum:'', argPref:false, argSafe:false, argIline:false,
   optCap:true, optEval:true, optSave:'',
-  craOn:false, craMax:'30', craMin:'', craW:'', craAll:true,
+  craOn:false, craMax:'30', craMin:'', craW:'', craAll:true, rclOn:false, rclMin:'', rclW:'',
   thkMode:'AFE', thkG:'1.0', thkGW:'', thkA:'1.0', thkAW:'', thkCmax:'', thkCmaxW:'', thkCmin:'', thkCminW:'', thkDs:false
 };
 const CAO_PRESET_EXAMPLE=[['1','11'],['7','6.5'],['12','9']]; // example: s1 cuts Y-LOWER, s12 cuts Y-UPPER, s7 = real stop
@@ -654,7 +660,7 @@ const BIND=[['llib','llib','num'],['quiet','quiet','chk'],['coreOn','core-on','c
  ['argOn','arg-on','chk'],['argLib','arg-lib'],['argCat','arg-cat'],['argI1','arg-i1'],['argI2','arg-i2'],['argExc','arg-exc'],['argPrice','arg-price'],
  ['argBub','arg-bub'],['argSta','arg-sta'],['argAci','arg-aci'],['argAlk','arg-alk'],['argHum','arg-hum'],['argPref','arg-pref','chk'],['argSafe','arg-safe','chk'],['argIline','arg-iline','chk'],
  ['optCap','opt-cap','chk'],['optEval','opt-eval','chk'],['optSave','opt-save'],
- ['craOn','cra-on','chk'],['craMax','cra-max'],['craMin','cra-min'],['craW','cra-w'],['craAll','cra-all','chk'],
+ ['craOn','cra-on','chk'],['craMax','cra-max'],['craMin','cra-min'],['craW','cra-w'],['rclOn','rcl-on','chk'],['rclMin','rcl-min'],['rclW','rcl-w'],['craAll','cra-all','chk'],
  ['thkMode','thk-mode'],['thkG','thk-g'],['thkGW','thk-gw'],['thkA','thk-a'],['thkAW','thk-aw'],['thkCmax','thk-cmax'],['thkCmaxW','thk-cmaxw'],['thkCmin','thk-cmin'],['thkCminW','thk-cminw'],['thkDs','thk-ds','chk']];
 
 function toForm(){
@@ -1110,7 +1116,12 @@ function generate(){
       if(a!==null&&b!==null&&a-b<3) info(`CRA 上下限只差 ${+(a-b).toFixed(2)}°，接近直接给目标值，搜索空间会被压得很窄。`); } }
   if(S.thkDs){ pre.unshift(...thkLines(err,warn,info,false));
     info('厚度控制写进了 SPECIAL AANT：它排在 DSEARCH 自动生成的 AEC/ACC 之后，会覆盖它们（手册说可以这样改默认参数）。搜索阶段用 AFE 还没实测过。'); }
-  else if(S.vfOn) warn('带 VFIELD 时边厚基本没被控制住。DSEARCH 自动加的 AEC 只看全视场的上、下边缘光线，而且光瞳已经按 VFIELD 缩小（手册 §10.3.7）。前组口径往往由小视场决定，PAD 又按不渐晕的软口径画镜片。实测一轮 10 个结果：AEC 位置边厚 0.7–1.0 mm，按渐晕后各视场光束算是 −0.07–0.7 mm，按 PAD 画的口径是 −0.7 到 −5.4 mm。可以勾选精修宏里的"也写进 DSEARCH 的 SPECIAL AANT"，用 AFE 在口径处控制（偏保守，搜索阶段还没实测）；搜索完用 仓库里附带的 rle_edge_check.py 检查。');
+  else if(S.vfOn&&!S.rclOn) warn('带 VFIELD 时边厚基本没被控制住。DSEARCH 自动加的 AEC 只看全视场的上、下边缘光线，而且光瞳已经按 VFIELD 缩小（手册 §10.3.7）。很多镜片的光束口径由中间视场决定，PAD 又按不渐晕的软口径画镜片。实测两轮各 10 个结果：AEC 位置边厚都在 0.7–1.0 mm，按渐晕后各视场光束算低到 −7.8 mm，按 PAD 画的口径低到 −10.7 mm。建议勾选渐晕卡片里的"按渐晕后的光束控制边厚（RCLEAR）"；搜索完用仓库里附带的 rle_edge_check.py 检查。');
+  { const rl=rclLines();
+    if(S.rclOn&&!rl.length) err('RCLEAR 最小边厚要大于 0，元件数也要先填。');
+    else if(rl.length){ pre.push(...rl);
+      info(`RCLEAR：${rl.length} 条光线 × ${2*(parseInt(S.nel,10)||0)-1} 对相邻面，最小边厚 ${+rclMinLens().toFixed(4)}（镜头单位），玻璃和空气间隔都管，量在光束实际经过的位置。还没在 SYNOPSYS 里实测过。`);
+      if(!S.vfOn) info('没开 VFIELD 时，全视场边缘光线一般已经决定了光束口径，DSEARCH 自带的 AEC 基本够用；RCLEAR 主要用于带渐晕的搜索。'); } }
   { const dup=pre.filter(l=>/\bA\s+P\s+/i.test(l)&&sa.some(x=>x.trim().toUpperCase()===l.toUpperCase()));
     if(dup.length) warn(`SPECIAL AANT 文本框里有 ${dup.length} 行和上面勾选项生成的完全一样，会重复计入评价函数（例如 ${dup[0]}），删掉文本框里的。`);
     const seen=new Set(), twice=sa.map(l=>l.trim().toUpperCase()).filter(l=>/^(M|L[A-Z]*)\s.*\bA\s+P\s+/.test(l)&&(seen.has(l)||!seen.add(l)));
@@ -1155,6 +1166,20 @@ function thkLines(err,warn,info,hardCao){
 }
 /* chief-ray angle at the image. Upper limit |HH| <= tan(max), one line per field (LUA = upper limit of |value|);
    lower limit |HH| >= tan(min) at full field only (LLA = lower limit of |value|). Blank = no limit. */
+/* edge clearance along the vignetted rim rays. RCLEAR tar wt window jsss jsps P hbar xen yen gbar makes one LLL
+   per adjacent surface pair on the ZG difference along that ray (manual 10.3.1.2). Surfaces 1..2N (stop takes no number). */
+function rclMinLens(){ const raw=String(S.rclMin??'').trim(); return raw===''?({MM:1,CM:0.1,IN:1/25.4}[S.units]||1):num(raw); } // default 1 mm, same as AEC
+function rclLines(){
+  if(!S.rclOn) return [];
+  const t=rclMinLens(), n=2*(parseInt(S.nel,10)||0);
+  if(!(t>0)||n<2) return [];
+  const w=String(S.rclW??'').trim()||'1', g=x=>String(+(+x).toFixed(4)), head=`RCLEAR ${g(t)} ${w} ${g(t/2)} 1 ${n} P`;
+  const fov=toks(S.fov).map(Number).filter(h=>h>=0&&h<=1);
+  const fs=[...new Set([0,...(fov.length?fov:[0.5,0.7,1])])].sort((a,b)=>a-b), L=[];
+  for(const h of fs){ if(h===0){ L.push(`${head} 0.0 0 1 0`); continue; }
+    L.push(`${head} ${fmt(h)} 0 1 0`,`${head} ${fmt(h)} 0 -1 0`,`${head} ${fmt(h)} 1 0 0`); }
+  return L;
+}
 function craParts(){
   const g=v=>{const r=String(v??'').trim(); return r===''?null:num(r);};
   return {a:g(S.craMax), b:g(S.craMin)};
@@ -1188,7 +1213,7 @@ function distLines(){
 }
 /* pull the generator's own distortion / CRA / GIHT lines out of an imported SPECIAL AANT and back into the controls */
 function absorbSaant(sa,T){
-  const out=[], dist=[], cra=[], craLo=[]; let giht=false;
+  const out=[], dist=[], cra=[], craLo=[], rcl=[]; let giht=false;
   for(let i=0;i<sa.length;i++){
     const l=sa[i].trim(), nx=k=>(sa[i+k]||'').trim();
     let m=l.match(/^(M|LUA)\s+(\S+)\s+(\S+)(?:\s+(\S+))?\s+A\s+P\s+YA\s+(\S+)$/i);
@@ -1198,6 +1223,8 @@ function absorbSaant(sa,T){
     if(/^M\s+\S+\s+2\s+A\s+GIHT$/i.test(l)){ giht=true; continue; }
     m=l.match(/^(LUA|LLA)\s+(\S+)\s+(\S+)\s+(\S+)\s+A\s+P\s+HH\s+(\S+)\s+0\s+0\s+0$/i);
     if(m){ (m[1].toUpperCase()==='LUA'?cra:craLo).push({t:+m[2],w:m[3],h:+m[5],src:[sa[i]]}); continue; }
+    m=l.match(/^RCLEAR\s+(\S+)\s+(\S+)\s+\S+\s+1\s+\d+\s+P\s+\S+\s+\S+\s+\S+\s+0$/i);
+    if(m){ rcl.push({t:m[1],w:m[2],src:[sa[i]]}); continue; }
     out.push(sa[i]);
   }
   const same=(a,k)=>a.every(x=>x[k]===a[0][k]);
@@ -1212,6 +1239,8 @@ function absorbSaant(sa,T){
     T.craMin=loOk?deg(craLo[0].t):''; }
   if(!upOk) cra.forEach(x=>out.push(...x.src));
   if(!loOk) craLo.forEach(x=>out.push(...x.src));
+  if(rcl.length&&same(rcl,'t')&&same(rcl,'w')&&+rcl[0].t>0){ T.rclOn=true; T.rclMin=rcl[0].t; T.rclW=rcl[0].w==='1'?'':rcl[0].w; }
+  else rcl.forEach(x=>out.push(...x.src));
   if(giht) T.twGiht=true;
   return out;
 }
@@ -1314,6 +1343,7 @@ function generateOpt(){
     if(S.twGiht&&O.yimg>0) pre.push(`M ${O.yimg.toFixed(4)} 2 A GIHT`);
     pre.push(...distLines());
     pre.push(...craLines());
+    pre.push(...rclLines());
     [...pre,...lines(S.saant)].forEach(l=>add(l.trim()));
     if(s(S.fnumW)!==''||S.twFw100) warn('DSEARCH 里 FNUM 带权重时，DSEARCH_OPT.MAC 里有对应的 1/FNUM 目标，这里没有生成；需要的话从那里抄过来。');
   }
@@ -1484,7 +1514,7 @@ function update(){
   $('w-vgp').hidden=S.vgShape!=='custom'; $('w-vgpts').hidden=!!S.vgAuto;
   const vis={'w-randn':S.randOn,'w-imm1':S.immOn,'w-imm2':S.immOn,'w-cov1':S.covOn,'w-cov2':S.covOn,'w-cov3':S.covOn,'w-pla':S.plaOn,
     'w-glp':S.glOn,'w-gln':S.glOn,'w-wopd':!!S.opdmode,'w-shear':/SHEAR/.test(S.opdmode||''),'w-dsensw':S.dsens!=='0',
-    'w-optlib':S.optSrc==='lib','w-optfile':S.optSrc==='file','w-fvf':S.optFvf,'w-thka':S.thkMode!=='AEC','w-thkaw':S.thkMode!=='AEC','w-cra1':S.craOn,'w-cra2':S.craOn,'w-cra3':S.craOn,'w-cra4':S.craOn,
+    'w-optlib':S.optSrc==='lib','w-optfile':S.optSrc==='file','w-fvf':S.optFvf,'w-thka':S.thkMode!=='AEC','w-thkaw':S.thkMode!=='AEC','w-cra1':S.craOn,'w-cra2':S.craOn,'w-cra3':S.craOn,'w-cra4':S.craOn,'w-rcl1':S.rclOn,'w-rcl2':S.rclOn,
     'w-dist1':S.twDist,'w-dist2':S.twDist,'w-dist3':S.twDist,'w-dist4':S.twDist};
   for(const [id,v] of Object.entries(vis)) $(id).hidden=!v;
   $('arg-body').classList.toggle('disabled',!S.argOn);

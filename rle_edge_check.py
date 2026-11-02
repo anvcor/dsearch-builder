@@ -1,5 +1,6 @@
 # Edge-thickness check for SYNOPSYS RLE files (meridional real-ray trace, d-line GLM nd).
-# usage: python rle_edge_check.py [file.RLE ...] [--detail]   (default: DSEARCH01-10.RLE in the current folder)
+# usage: python rle_edge_check.py [file.RLE ...] [--detail] [--cao]   (default: DSEARCH01-10.RLE in the current folder)
+#   --detail  edge thickness of every surface pair;  --cao  beam semi-aperture of every surface
 # Meridional real-ray trace of a SYNOPSYS RLE (spheres/conics, d-line GLM nd) to compare
 # beam footprints with and without VFIELD, and edge thickness at those heights.
 #
@@ -117,3 +118,8 @@ if __name__=='__main__':
               *[x for m in ('aec','vign','full') for x in (worst[m][m][1],worst[m]['pair'])]))
         if '--detail' in sys.argv:
             for r in rows: print('   %-6s %-5s  AEC h=%5.2f ET=%6.2f | vign h=%5.2f ET=%6.2f | full h=%5.2f ET=%6.2f'%(r['pair'],r['kind'],*r['aec'],*r['vign'],*r['full']))
+        if '--cao' in sys.argv:
+            # beam semi-aperture per surface (meridional rim rays only): a starting point for hard CAOs in refinement
+            print('   surface  vignetted beam  full beam (soft CAO)')
+            for s in sorted(F['vign']):
+                if s<max(F['vign']): print('   %5d    %8.3f      %8.3f'%(s,F['vign'][s],F['full'].get(s,float('nan'))))

@@ -22,7 +22,7 @@
 - **系统**：由焦距、半像高和 F 数换算 OBB，也可以直接填 OBB；设置波长和波长权重。
 - **结构与搜索空间**：元件数、正负号组合（SINGLE / FILTER），逐面指定非球面（`ASPH n 面号…`、`ASPH Q`、`ASPH R`）。
 - **起始结构**：RSTART、THSTART、ASTART、NSTART、PDIST、RANDOM、CSD、AFOCAL、IMMERSE、COVER、PLASTIC，以及正、负元件的指定玻璃（GLASS POS/NEG）。
-- **渐晕**：编辑 VFIELD 表（可折叠，默认关闭）。可以用曲线生成，也可以从精修结果的 FVF 输出或 `.RLE` 里的 VFIELD 段导入。
+- **渐晕**：编辑 VFIELD 表（可折叠，默认关闭）。可以用曲线生成，也可以从精修结果的 FVF 输出或 `.RLE` 里的 VFIELD 段导入。可选用 RCLEAR 沿各视场渐晕后的边缘光线控制边厚：DSEARCH 自带的 AEC 只看全视场边缘光线，带渐晕时管不住中间视场经过的位置。
 - **目标**：FNUM、BACK、TOTL、光阑位置（FIRST / MIDDLE / LAST / FIX / TELE、FREE / REAL）、视场和视场权重、颜色、退火（ANNEAL）、QUICK 初筛方式、去敏（DSENS）、像质评价方式（OPD / SHEAR 等）。
 - **附加控制**，写进 SPECIAL AANT：
   - 钉住像高（GIHT）。
@@ -51,7 +51,7 @@
 python rle_edge_check.py DSEARCH01.RLE DSEARCH02.RLE --detail
 ```
 
-不带文件名时，检查当前目录下的 `DSEARCH01–10.RLE`。它是近似计算（只算子午面、单一波长），用来发现明显的问题，不能代替 SYNOPSYS 自己的分析。
+不带文件名时，检查当前目录下的 `DSEARCH01–10.RLE`。`--detail` 列出每一对相邻面的边厚；`--cao` 列出每个面渐晕后光束和满光束的半口径，可以作为精修时设置硬口径的参考。它是近似计算（只算子午面、单一波长），用来发现明显的问题，不能代替 SYNOPSYS 自己的分析。
 
 ## 适用版本与说明
 
@@ -60,6 +60,7 @@ python rle_edge_check.py DSEARCH01.RLE DSEARCH02.RLE --detail
   - 把 AFE 等边厚控制写进 DSEARCH 的 SPECIAL AANT（搜索阶段）。
   - 精修宏的完整流程。
   - 畸变百分比组合项（`… A P YA h / DIV GIHT / MUL CONST 100/h / S CONST 100`）。
+  - CRA 下限（`LLA`）和 RCLEAR 边厚控制。
 - CRA 上限（`LUA tan(CRA) … A P HH h 0 0 0`）在一轮搜索中实测生效。
 - 页面给出的提示和告警是经验规则，不保证覆盖所有情况。
 
