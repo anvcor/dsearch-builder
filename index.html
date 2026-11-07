@@ -84,6 +84,8 @@ button:hover{border-color:var(--accent);color:var(--accent)}
 button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 button.primary:hover{filter:brightness(1.08);color:var(--accent-ink)}
 button.ghost{border-color:transparent;background:transparent;color:var(--accent);padding:4px 6px}
+a.btn{display:inline-flex;align-items:center;text-decoration:none;font-size:13px;font-weight:500;border-radius:4px;border:1px solid var(--line-strong);background:var(--sheet);color:var(--ink);padding:6px 11px}
+a.btn:hover{border-color:var(--accent);color:var(--accent)}
 .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:4px;overflow:hidden}
 .seg button{border:0;border-radius:0;border-right:1px solid var(--line-strong);padding:5px 10px;background:var(--paper)}
 .seg button:last-child{border-right:0}
@@ -183,6 +185,7 @@ button.fold[aria-expanded="true"] .chev{transform:translateY(2px) rotate(-135deg
     <p class="sub">填写镜头规格、搜索目标、渐晕和非球面布局，右侧实时生成可直接 <span class="mono">EM</span> 运行的 <span class="mono">.MAC</span>。规则来自 SYNOPSYS 手册和在 V15/V16 上的实际测试。</p>
   </div>
   <div class="top-actions">
+    <a class="btn" href="convert.html">RLE 转 ZMX / SEQ</a>
     <button id="btn-sample" type="button">载入示例（35mm F/2.8）</button>
     <button id="btn-reset" type="button">清空为默认</button>
   </div>

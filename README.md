@@ -1,4 +1,5 @@
 **在线使用：https://anvcor.github.io/dsearch-builder/**
+**RLE 转 Zemax / CODE V：https://anvcor.github.io/dsearch-builder/convert.html**
 
 # DSEARCH 宏生成器
 
@@ -40,6 +41,19 @@
 - 多轮 `SYNOPSYS n` + FVF，可选 ARGLASS 换成实际玻璃。
 - 最后 CAP、EVAL、SAVE。
 
+## RLE 转 Zemax / CODE V（convert.html）
+
+把 SYNOPSYS 的 `.RLE` 镜头文件转成 Zemax `.zmx` 和 CODE V `.seq`。转换核心是 `rle2lens.js`，网页和 Node 都能用；文件只在浏览器里处理，不会上传。
+
+- **光阑**：`APS 1` 加 YP1 时，光阑不在任何面上，而是在近轴主光线穿过光轴的位置。转换时按主波长追近轴主光线找到这一点，在那里插入光阑面（可能在镜片之间、玻璃里，或第 1 面之前）。`APS n` 放在第 n 面，`APS -n` 是实光阑，Zemax 里打开实际光线瞄准。用 516 个本地 RLE 文件核对：101 个 `APS n` 文件按光阑面重新求出的 YP1 与 SYNOPSYS 写在文件里的值全部一致。
+- **视场**：默认 10 个点：0、0.2、0.3 … 0.9、1.0，可以改。OBB 物方按像高（tan）等分，角度 = atan(h·tan ω)，与 SYNOPSYS 的视场点一一对应；OBD 按角度等分；有限距离物体按物高。Zemax 里视场从大到小排（可改），CODE V 从轴上往外排。
+- **孔径**：入瞳直径 = 2·YMP1（无限远物）；有限距离物体按近轴入瞳位置换算；物方远心用物方数值孔径。
+- **渐晕**：VFIELD 按 SYNOPSYS 的线性插值取到各视场，换算成 Zemax 的 VDY / VCY / VCX 和 CODE V 的 VUY / VLY / VUX / VLX。
+- **面型**：球面、二次曲面、DC1–DC4 / AT1–AT5 的旋转对称项（r² 到 r²⁰）。Zemax 到 r¹⁶ 用 Even Asphere，有 r¹⁸ / r²⁰ 时用 Extended Asphere；CODE V 用 ASP（有 r² 项时用 SPS ODD）。曲率、厚度拾取（PCV / PTH）按规则展开成数值。
+- **玻璃**：模型玻璃（GLM）写成两边的模型玻璃；目录玻璃（GTB）按厂家写牌号（S Schott、O Ohara、H Hoya、G 成都光明、M 住田、N 尼康、F 康宁、R LZOS），锗、硒化锌等红外材料对应到 Zemax INFRARED 和 CODE V SPECIAL 库；对不上的按文件里的各波长折射率换成模型玻璃。也可以选择全部用模型玻璃。
+- **硬口径**：CAO 写成 Zemax 的固定半口径 + 圆形孔径，CODE V 的 CIR。
+- **暂不支持**：变焦（ZFILE，只转第 1 个位置）、偏心和倾斜、非旋转对称项、矩形 / 椭圆口径、中心遮拦、特殊面型、高斯光束物方。遇到时页面会逐条提示。
+
 ## rle_edge_check.py
 
 检查 DSEARCH 结果镜片边厚的小脚本，只用 Python 3 标准库。它对 `.RLE` 做子午面实际光线追迹（球面、二次曲面、DC1 高次项，玻璃按 d 线的 GLM nd），在三个位置给出每片镜片的最小边厚：
@@ -61,6 +75,7 @@ python rle_edge_check.py DSEARCH01.RLE DSEARCH02.RLE --detail
   - 精修宏的完整流程。
   - 畸变百分比组合项（`… A P YA h / DIV GIHT / MUL CONST 100/h / S CONST 100`）。
   - CRA 下限（`LLA`）和 RCLEAR 边厚控制。
+  - RLE 转换生成的 `.zmx` / `.seq`：格式照 OpticStudio、CODE V 自己存出的文件写，光阑位置和近轴量已与 SYNOPSYS 核对，但还没有在两个软件里逐个打开比对光线追迹结果。
 - CRA 上限（`LUA tan(CRA) … A P HH h 0 0 0`）在一轮搜索中实测生效。
 - 页面给出的提示和告警是经验规则，不保证覆盖所有情况。
 
